@@ -89,9 +89,18 @@
                                     <div class="font-semibold">{{ auth()->user()->name }}</div>
                                     <div class="text-xs text-gray-500">{{ ucfirst(auth()->user()->role) }}</div>
                                 </div>
+                                @if(auth()->user()->isStudent())
+                                    <a href="{{ route('student.profile') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
+                                        <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                                    </a>
+                                @elseif(auth()->user()->isTeacher())
+                                    <a href="{{ route('teacher.profile') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
+                                        <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                                    </a>
+                                @endif
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
-                                    <button type="submit" class="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
+                                    <button type="submit" class="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150 border-t">
                                         <i class="fas fa-sign-out-alt mr-2"></i>Logout
                                     </button>
                                 </form>

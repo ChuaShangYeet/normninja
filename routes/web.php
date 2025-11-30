@@ -63,12 +63,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [TeacherController::class, 'dashboard'])->name('dashboard');
         Route::get('/student-performance', [TeacherController::class, 'studentPerformance'])->name('student-performance');
         Route::get('/students/{student}', [TeacherController::class, 'studentDetail'])->name('student.detail');
+        Route::get('/profile', [TeacherController::class, 'showProfile'])->name('profile');
+        Route::put('/profile', [TeacherController::class, 'updateProfile'])->name('profile.update');
     });
 
     // Student routes
     Route::middleware('role:student')->prefix('student')->name('student.')->group(function () {
         Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
-        
+
         Route::get('/calendar', [StudentController::class, 'calendarIndex'])->name('calendar.index');
         Route::post('/calendar/store', [StudentController::class, 'calendarStore'])->name('calendar.store');
         Route::put('/calendar/{event}', [StudentController::class, 'calendarUpdate'])->name('calendar.update');
@@ -78,6 +80,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/reminders/{reminder}', [StudentController::class, 'reminderUpdate'])->name('reminders.update');
         Route::delete('/reminders/{reminder}', [StudentController::class, 'reminderDelete'])->name('reminders.delete');
 
+        Route::get('/profile', [StudentController::class, 'showProfile'])->name('profile');
+        Route::put('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
     });
 
     // Calendar Events
