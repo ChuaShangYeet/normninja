@@ -10,12 +10,14 @@ class LearningMaterialController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', LearningMaterial::class);
+
         if (auth()->user()->isTeacher()) {
             $materials = auth()->user()->learningMaterials()->latest()->paginate(15);
         } else {
             $materials = LearningMaterial::where('is_published', true)->latest()->paginate(15);
         }
-        
+
         return view('learning-materials.index', compact('materials'));
     }
 
@@ -59,9 +61,7 @@ class LearningMaterialController extends Controller
 
     public function show(LearningMaterial $learningMaterial)
     {
-        if (!$learningMaterial->is_published && !auth()->user()->isTeacher()) {
-            abort(403);
-        }
+        $this->authorize('view', $learningMaterial);
 
         return view('learning-materials.show', compact('learningMaterial'));
     }

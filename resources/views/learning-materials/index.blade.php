@@ -107,12 +107,12 @@
 
                 <!-- Action Buttons -->
                 <div class="flex gap-2">
-                    @if(auth()->user()->isTeacher())
-                        <a href="{{ route('learning-materials.show', $material) }}" 
+                    @if(auth()->user()->isTeacher() && $material->teacher_id === auth()->id())
+                        <a href="{{ route('learning-materials.show', $material) }}"
                            class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm font-semibold transition duration-200">
                             <i class="fas fa-eye mr-1"></i>View
                         </a>
-                        <a href="{{ route('learning-materials.edit', $material) }}" 
+                        <a href="{{ route('learning-materials.edit', $material) }}"
                            class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm font-semibold transition duration-200">
                             <i class="fas fa-edit"></i>
                         </a>
@@ -124,7 +124,7 @@
                             </button>
                         </form>
                     @else
-                        <a href="{{ route('learning-materials.show', $material) }}" 
+                        <a href="{{ route('learning-materials.show', $material) }}"
                            class="flex-1 text-center bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm font-semibold transition duration-200">
                             <i class="fas fa-eye mr-1"></i>View & Download
                         </a>
