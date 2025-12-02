@@ -33,10 +33,10 @@
                         <a href="{{ route('admin.dashboard') }}" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
                             <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
                         </a>
-                        <a href="{{ route('admin.students') }}" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
+                        <a href="{{ route('admin.students.index') }}" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
                             <i class="fas fa-user-graduate mr-2"></i>Students
                         </a>
-                        <a href="{{ route('admin.teachers') }}" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
+                        <a href="{{ route('admin.teachers.index') }}" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
                             <i class="fas fa-chalkboard-teacher mr-2"></i>Teachers
                         </a>
                     @elseif(auth()->user()->isTeacher())

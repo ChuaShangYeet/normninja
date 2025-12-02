@@ -42,15 +42,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
         
         // Student management
-        Route::get('/students', [AdminController::class, 'students'])->name('students');
+        Route::get('/students', [AdminController::class, 'students'])->name('students.index');
         Route::get('/students/create', [AdminController::class, 'createStudent'])->name('students.create');
         Route::post('/students', [AdminController::class, 'storeStudent'])->name('students.store');
         Route::get('/students/{student}/edit', [AdminController::class, 'editStudent'])->name('students.edit');
         Route::put('/students/{student}', [AdminController::class, 'updateStudent'])->name('students.update');
         Route::delete('/students/{student}', [AdminController::class, 'deleteStudent'])->name('students.delete');
-        
+
         // Teacher management
-        Route::get('/teachers', [AdminController::class, 'teachers'])->name('teachers');
+        Route::get('/teachers', [AdminController::class, 'teachers'])->name('teachers.index');
         Route::get('/teachers/create', [AdminController::class, 'createTeacher'])->name('teachers.create');
         Route::post('/teachers', [AdminController::class, 'storeTeacher'])->name('teachers.store');
         Route::get('/teachers/{teacher}/edit', [AdminController::class, 'editTeacher'])->name('teachers.edit');
