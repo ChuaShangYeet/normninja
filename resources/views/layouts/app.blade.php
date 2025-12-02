@@ -91,11 +91,11 @@
                                 </div>
                                 @if(auth()->user()->isStudent())
                                     <a href="{{ route('student.profile') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
-                                        <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                                        <i class="fas fa-user mr-2"></i>My Profile
                                     </a>
                                 @elseif(auth()->user()->isTeacher())
                                     <a href="{{ route('teacher.profile') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
-                                        <i class="fas fa-user-edit mr-2"></i>Edit Profile
+                                        <i class="fas fa-user mr-2"></i>My Profile
                                     </a>
                                 @endif
                                 <form method="POST" action="{{ route('logout') }}">

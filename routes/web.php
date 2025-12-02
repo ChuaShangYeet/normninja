@@ -64,6 +64,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/student-performance', [TeacherController::class, 'studentPerformance'])->name('student-performance');
         Route::get('/students/{student}', [TeacherController::class, 'studentDetail'])->name('student.detail');
         Route::get('/profile', [TeacherController::class, 'showProfile'])->name('profile');
+        Route::get('/profile/edit', [TeacherController::class, 'editProfile'])->name('profile.edit');
         Route::put('/profile', [TeacherController::class, 'updateProfile'])->name('profile.update');
     });
 
@@ -81,6 +82,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/reminders/{reminder}', [StudentController::class, 'reminderDelete'])->name('reminders.delete');
 
         Route::get('/profile', [StudentController::class, 'showProfile'])->name('profile');
+        Route::get('/profile/edit', [StudentController::class, 'editProfile'])->name('profile.edit');
         Route::put('/profile', [StudentController::class, 'updateProfile'])->name('profile.update');
     });
 

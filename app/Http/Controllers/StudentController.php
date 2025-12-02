@@ -139,6 +139,12 @@ class StudentController extends Controller
         return view('student.profile', compact('user'));
     }
 
+    public function editProfile()
+    {
+        $user = auth()->user();
+        return view('student.profile-edit', compact('user'));
+    }
+
     public function updateProfile(Request $request)
     {
         $user = auth()->user();

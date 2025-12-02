@@ -167,6 +167,12 @@ class TeacherController extends Controller
         return view('teacher.profile', compact('user'));
     }
 
+    public function editProfile()
+    {
+        $user = auth()->user();
+        return view('teacher.profile-edit', compact('user'));
+    }
+
     public function updateProfile(Request $request)
     {
         $user = auth()->user();
