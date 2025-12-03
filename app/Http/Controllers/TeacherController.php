@@ -75,19 +75,6 @@ class TeacherController extends Controller
             $totalQuizzes = $teacher->quizzes()->where('is_published', true)->count();
             $completedQuizzes = $quizAttempts->count();
 
-            // Get assignment performance
-            $assignments = Assignment::where('teacher_id', $teacher->id)
-                ->where('is_published', true)
-                ->get();
-
-            $totalAssignments = $assignments->count();
-            $submittedAssignments = AssignmentSubmission::where('student_id', $student->id)
-                ->whereIn('assignment_id', $assignments->pluck('id'))
-                ->whereIn('status', ['submitted', 'graded'])
-                ->count();
-
-            $missingAssignments = $totalAssignments - $submittedAssignments;
-
             // Determine if student needs support
             $needsSupport = false;
             $supportReasons = [];
@@ -97,19 +84,11 @@ class TeacherController extends Controller
                 $supportReasons[] = "Low quiz average (" . round($avgQuizScore, 2) . "%)";
             }
 
-            if ($missingAssignments > 0) {
-                $needsSupport = true;
-                $supportReasons[] = "{$missingAssignments} missing assignments";
-            }
-
             $performanceData[] = [
                 'student' => $student,
                 'avg_quiz_score' => round($avgQuizScore, 2),
                 'completed_quizzes' => $completedQuizzes,
                 'total_quizzes' => $totalQuizzes,
-                'submitted_assignments' => $submittedAssignments,
-                'total_assignments' => $totalAssignments,
-                'missing_assignments' => $missingAssignments,
                 'needs_support' => $needsSupport,
                 'support_reasons' => $supportReasons,
             ];
@@ -140,15 +119,6 @@ class TeacherController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Assignment submissions
-        $assignmentSubmissions = AssignmentSubmission::where('student_id', $student->id)
-            ->whereHas('assignment', function($query) use ($teacher) {
-                $query->where('teacher_id', $teacher->id);
-            })
-            ->with('assignment')
-            ->orderBy('created_at', 'desc')
-            ->get();
-
         // Game attempts
         $gameAttempts = $student->gameAttempts()
             ->whereHas('game', function($query) use ($teacher) {
@@ -158,7 +128,7 @@ class TeacherController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return view('teacher.student-detail', compact('student', 'quizAttempts', 'assignmentSubmissions', 'gameAttempts'));
+        return view('teacher.student-detail', compact('student', 'quizAttempts', 'gameAttempts'));
     }
 
     public function showProfile()
