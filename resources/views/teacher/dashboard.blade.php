@@ -78,9 +78,9 @@
         </div>
     </div>
 
-    <!-- Calendar and Reminders Section -->
+    <!-- Calendar Section -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Schedule Calendar (2/3 width) -->
+        <!-- Calendar (2/3 width) -->
         <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-gray-800">
@@ -88,7 +88,7 @@
                     Schedule Calendar
                 </h2>
             </div>
-            
+
             <!-- Calendar Navigation -->
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-800" id="currentMonth"></h3>
@@ -117,7 +117,7 @@
                     <div class="p-2 text-center text-xs font-semibold text-gray-600">Fri</div>
                     <div class="p-2 text-center text-xs font-semibold text-gray-600">Sat</div>
                 </div>
-                
+
                 <!-- Calendar Days -->
                 <div id="calendarDays" class="grid grid-cols-7">
                     <!-- Days will be populated by JavaScript -->
@@ -128,34 +128,13 @@
             <button onclick="openAddEventModal()" class="mt-4 w-full bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition">
                 <i class="fas fa-plus mr-2"></i>Add Event
             </button>
-
-            <!-- Events List -->
-            <div id="eventsList" class="mt-4 space-y-2 max-h-60 overflow-y-auto">
-                <!-- Events will be populated here -->
-            </div>
         </div>
 
-        <!-- Reminder List (1/3 width) -->
+        <!-- Events List (1/3 width) -->
         <div class="bg-white rounded-lg shadow-md p-6">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-gray-800">
-                    <i class="fas fa-bell text-pink-600 mr-2"></i>
-                    Reminders
-                </h2>
-            </div>
-
-            <!-- Add Reminder Button -->
-            <button onclick="openAddReminderModal()" class="w-full bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700 transition mb-4">
-                <i class="fas fa-plus mr-2"></i>Add Reminder
-            </button>
-
-            <!-- Reminders List -->
-            <div id="remindersList" class="space-y-2 max-h-96 overflow-y-auto">
-                <!-- Empty state -->
-                <div id="emptyReminders" class="text-center py-8 text-gray-400">
-                    <i class="fas fa-bell-slash text-4xl mb-2"></i>
-                    <p>No reminders yet.</p>
-                </div>
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Upcoming Events</h3>
+            <div id="eventsList" class="space-y-2 max-h-[600px] overflow-y-auto">
+                <!-- Events will be populated here -->
             </div>
         </div>
     </div>
@@ -335,44 +314,6 @@
     </div>
 </div>
 
-<!-- Add/Edit Reminder Modal -->
-<div id="reminderModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg p-6 w-96 shadow-xl">
-        <h3 class="text-xl font-bold text-gray-800 mb-4" id="reminderModalTitle">Add Reminder</h3>
-        <form id="reminderForm" onsubmit="saveReminder(event)">
-            <input type="hidden" id="reminderId">
-            
-            <div class="mb-4">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Reminder Text</label>
-                <input type="text" 
-                       id="reminderText" 
-                       class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-pink-500" 
-                       placeholder="Enter reminder..."
-                       required>
-            </div>
-            
-            <div class="mb-4">
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Date (Optional)</label>
-                <input type="date" 
-                       id="reminderDate" 
-                       class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-pink-500">
-            </div>
-            
-            <div class="flex justify-end gap-2">
-                <button type="button" 
-                        onclick="closeReminderModal()" 
-                        class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition">
-                    Cancel
-                </button>
-                <button type="submit" 
-                        class="px-4 py-2 bg-pink-600 text-white rounded hover:bg-pink-700 transition">
-                    Save Reminder
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <!-- CSRF Token for AJAX -->
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -380,7 +321,6 @@
 // Calendar functionality with CRUD
 let currentDate = new Date();
 let events = [];
-let reminders = [];
 
 // Get CSRF token
 const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
@@ -392,20 +332,12 @@ const API = {
         store: '/calendar-events',
         update: (id) => `/calendar-events/${id}`,
         destroy: (id) => `/calendar-events/${id}`
-    },
-    reminders: {
-        index: '/reminders',
-        store: '/reminders',
-        update: (id) => `/reminders/${id}`,
-        toggle: (id) => `/reminders/${id}/toggle`,
-        destroy: (id) => `/reminders/${id}`
     }
 };
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     loadEvents();
-    loadReminders();
     renderCalendar();
 });
 
@@ -512,135 +444,6 @@ function editEvent(event) {
     document.getElementById('eventModal').classList.remove('hidden');
 }
 
-// ===== REMINDERS CRUD =====
-
-async function loadReminders() {
-    try {
-        const timestamp = new Date().getTime();
-        const response = await fetch(API.reminders.index + '?t=' + timestamp, {
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json',
-                'Cache-Control': 'no-cache'
-            }
-        });
-        
-        if (response.ok) {
-            reminders = await response.json();
-            renderReminders();
-        }
-    } catch (error) {
-        console.error('Error loading reminders:', error);
-        showNotification('Failed to load reminders', 'error');
-    }
-}
-
-async function saveReminder(e) {
-    e.preventDefault();
-    
-    const reminderId = document.getElementById('reminderId').value;
-    const data = {
-        text: document.getElementById('reminderText').value,
-        date: document.getElementById('reminderDate').value || null
-    };
-    
-    try {
-        const isEdit = reminderId !== '';
-        const url = isEdit ? API.reminders.update(reminderId) : API.reminders.store;
-        const method = isEdit ? 'PUT' : 'POST';
-        
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok) {
-            closeReminderModal();
-            showNotification(result.message, 'success');
-            await loadReminders();
-        } else {
-            showNotification(result.message || 'Failed to save reminder', 'error');
-        }
-    } catch (error) {
-        console.error('Error saving reminder:', error);
-        showNotification('Failed to save reminder', 'error');
-    }
-}
-
-function editReminder(reminder) {
-    document.getElementById('reminderModalTitle').textContent = 'Edit Reminder';
-    document.getElementById('reminderId').value = reminder.id;
-    document.getElementById('reminderText').value = reminder.text;
-    
-    if (reminder.date) {
-        const dateValue = reminder.date.includes(' ') ? reminder.date.split(' ')[0] : reminder.date;
-        document.getElementById('reminderDate').value = dateValue;
-    } else {
-        document.getElementById('reminderDate').value = '';
-    }
-    
-    document.getElementById('reminderModal').classList.remove('hidden');
-}
-
-async function toggleReminder(id) {
-    try {
-        const response = await fetch(API.reminders.toggle(id), {
-            method: 'PATCH',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json'
-            }
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok) {
-            await loadReminders();
-        } else {
-            showNotification(result.message || 'Failed to update reminder', 'error');
-        }
-    } catch (error) {
-        console.error('Error toggling reminder:', error);
-        showNotification('Failed to update reminder', 'error');
-    }
-}
-
-async function deleteReminder(id) {
-    if (!confirm('Are you sure you want to delete this reminder?')) return;
-    
-    try {
-        const response = await fetch(API.reminders.destroy(id), {
-            method: 'DELETE',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json'
-            }
-        });
-        
-        const result = await response.json();
-        
-        if (response.ok) {
-            closeReminderModal();
-            showNotification(result.message, 'success');
-            setTimeout(async () => {
-                await loadReminders();
-            }, 100);
-        } else {
-            showNotification(result.message || 'Failed to delete reminder', 'error');
-        }
-    } catch (error) {
-        console.error('Error deleting reminder:', error);
-        showNotification('Failed to delete reminder', 'error');
-    }
-}
-
 // ===== RENDERING FUNCTIONS =====
 
 function renderCalendar() {
@@ -741,54 +544,6 @@ function renderEventsList() {
     `).join('');
 }
 
-function renderReminders() {
-    const remindersList = document.getElementById('remindersList');
-    const emptyState = document.getElementById('emptyReminders');
-    
-    if (!remindersList || !emptyState) {
-        console.error('Reminder elements not found!');
-        return;
-    }
-    
-    const existingReminders = remindersList.querySelectorAll('.reminder-item');
-    existingReminders.forEach(item => item.remove());
-    
-    if (reminders.length === 0) {
-        emptyState.classList.remove('hidden');
-        return;
-    }
-    
-    emptyState.classList.add('hidden');
-    
-    reminders.forEach(reminder => {
-        const reminderDiv = document.createElement('div');
-        reminderDiv.className = `reminder-item flex items-start gap-3 p-3 border rounded hover:bg-gray-50 transition ${reminder.is_completed ? 'opacity-50' : ''}`;
-        
-        reminderDiv.innerHTML = `
-            <input type="checkbox" 
-                   ${reminder.is_completed ? 'checked' : ''} 
-                   onchange="toggleReminder(${reminder.id})"
-                   class="mt-1 cursor-pointer">
-            <div class="flex-1">
-                <p class="font-semibold text-gray-800 ${reminder.is_completed ? 'line-through' : ''}">${reminder.text}</p>
-                <p class="text-xs text-gray-500 mt-1">
-                    <i class="fas fa-calendar mr-1"></i>${formatDate(reminder.date)}
-                </p>
-            </div>
-            <div class="flex gap-2">
-                <button onclick='editReminder(${JSON.stringify(reminder).replace(/'/g, "\\'")})'  class="text-blue-500 hover:text-blue-700">
-                    <i class="fas fa-edit text-sm"></i>
-                </button>
-                <button onclick="deleteReminder(${reminder.id})" class="text-red-500 hover:text-red-700">
-                    <i class="fas fa-trash text-sm"></i>
-                </button>
-            </div>
-        `;
-        
-        remindersList.appendChild(reminderDiv);
-    });
-}
-
 // ===== MODAL FUNCTIONS =====
 
 function openAddEventModal() {
@@ -805,17 +560,6 @@ function closeEventModal() {
     document.getElementById('eventModal').classList.add('hidden');
 }
 
-function openAddReminderModal() {
-    document.getElementById('reminderModalTitle').textContent = 'Add Reminder';
-    document.getElementById('reminderId').value = '';
-    document.getElementById('reminderText').value = '';
-    document.getElementById('reminderDate').value = '';
-    document.getElementById('reminderModal').classList.remove('hidden');
-}
-
-function closeReminderModal() {
-    document.getElementById('reminderModal').classList.add('hidden');
-}
 // ===== NAVIGATION FUNCTIONS =====
 
 function previousMonth() {
