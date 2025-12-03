@@ -10,7 +10,7 @@
 
     <!-- Alert for Students Needing Support -->
     <?php
-        $studentsNeedingSupport = collect($performanceData)->filter(function($data) {
+        $studentsNeedingSupport = collect($performance)->filter(function($data) {
             return $data['needs_support'];
         });
     ?>

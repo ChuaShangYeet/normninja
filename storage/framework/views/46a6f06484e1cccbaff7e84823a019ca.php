@@ -33,10 +33,10 @@
                         <a href="<?php echo e(route('admin.dashboard')); ?>" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
                             <i class="fas fa-tachometer-alt mr-2"></i>Dashboard
                         </a>
-                        <a href="<?php echo e(route('admin.students')); ?>" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
+                        <a href="<?php echo e(route('admin.students.index')); ?>" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
                             <i class="fas fa-user-graduate mr-2"></i>Students
                         </a>
-                        <a href="<?php echo e(route('admin.teachers')); ?>" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
+                        <a href="<?php echo e(route('admin.teachers.index')); ?>" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
                             <i class="fas fa-chalkboard-teacher mr-2"></i>Teachers
                         </a>
                     <?php elseif(auth()->user()->isTeacher()): ?>
@@ -89,9 +89,18 @@
                                     <div class="font-semibold"><?php echo e(auth()->user()->name); ?></div>
                                     <div class="text-xs text-gray-500"><?php echo e(ucfirst(auth()->user()->role)); ?></div>
                                 </div>
+                                <?php if(auth()->user()->isStudent()): ?>
+                                    <a href="<?php echo e(route('student.profile')); ?>" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
+                                        <i class="fas fa-user mr-2"></i>My Profile
+                                    </a>
+                                <?php elseif(auth()->user()->isTeacher()): ?>
+                                    <a href="<?php echo e(route('teacher.profile')); ?>" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
+                                        <i class="fas fa-user mr-2"></i>My Profile
+                                    </a>
+                                <?php endif; ?>
                                 <form method="POST" action="<?php echo e(route('logout')); ?>">
                                     <?php echo csrf_field(); ?>
-                                    <button type="submit" class="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
+                                    <button type="submit" class="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150 border-t">
                                         <i class="fas fa-sign-out-alt mr-2"></i>Logout
                                     </button>
                                 </form>
