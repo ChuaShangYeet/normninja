@@ -163,16 +163,16 @@
     </div>
 
     <!-- Calendar Section -->
-    <div>
-        <!-- Schedule Calendar -->
-        <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Calendar (2/3 width) -->
+        <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-gray-800">
                     <i class="fas fa-calendar text-indigo-600 mr-2"></i>
                     Schedule Calendar
                 </h2>
             </div>
-            
+
             <!-- Calendar Navigation -->
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-800" id="currentMonth"></h3>
@@ -201,7 +201,7 @@
                     <div class="p-2 text-center text-xs font-semibold text-gray-600">Fri</div>
                     <div class="p-2 text-center text-xs font-semibold text-gray-600">Sat</div>
                 </div>
-                
+
                 <!-- Calendar Days -->
                 <div id="calendarDays" class="grid grid-cols-7">
                     <!-- Days will be populated by JavaScript -->
@@ -212,9 +212,12 @@
             <button onclick="openAddEventModal()" class="mt-4 w-full bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">
                 <i class="fas fa-plus mr-2"></i>Add Event
             </button>
+        </div>
 
-            <!-- Events List -->
-            <div id="eventsList" class="mt-4 space-y-2 max-h-60 overflow-y-auto">
+        <!-- Events List (1/3 width) -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Upcoming Events</h3>
+            <div id="eventsList" class="space-y-2 max-h-[500px] overflow-y-auto">
                 <!-- Events will be populated here -->
             </div>
         </div>
