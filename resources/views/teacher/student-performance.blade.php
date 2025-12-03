@@ -48,9 +48,6 @@
                             Quiz Performance
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Assignment Status
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Status
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -94,22 +91,6 @@
                                     {{ $data['completed_quizzes'] }}/{{ $data['total_quizzes'] }} quizzes completed
                                 </div>
                             </div>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">
-                                {{ $data['submitted_assignments'] }}/{{ $data['total_assignments'] }} submitted
-                            </div>
-                            @if($data['missing_assignments'] > 0)
-                                <div class="text-xs text-red-600 font-semibold mt-1">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    {{ $data['missing_assignments'] }} missing
-                                </div>
-                            @else
-                                <div class="text-xs text-green-600 font-semibold mt-1">
-                                    <i class="fas fa-check-circle"></i>
-                                    All submitted
-                                </div>
-                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if($data['needs_support'])
