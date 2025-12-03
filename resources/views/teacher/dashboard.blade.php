@@ -192,7 +192,7 @@
                     </div>
                     @endforeach
                 </div>
-                <a href="{{ route('teacher.performance') }}" class="block text-center mt-4 text-teal-600 hover:text-teal-800 text-sm font-semibold">
+                <a href="{{ route('teacher.student-performance') }}" class="block text-center mt-4 text-teal-600 hover:text-teal-800 text-sm font-semibold">
                     View All Performance Data <i class="fas fa-arrow-right ml-1"></i>
                 </a>
             @else

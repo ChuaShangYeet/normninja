@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('title', 'Learning Materials')
@@ -33,10 +34,21 @@
     </div>
     @endif
 
+    <!-- Student Helper Text -->
+    @if(auth()->user()->isStudent() && $materials->count() > 0)
+    <div class="bg-blue-50 border-l-4 border-blue-500 text-blue-700 p-4 mb-6 rounded">
+        <div class="flex items-center">
+            <i class="fas fa-info-circle mr-2"></i>
+            <p><strong>Tip:</strong> Click on any material card or the "View & Download" button to access your learning materials.</p>
+        </div>
+    </div>
+    @endif
+
     <!-- Materials Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @forelse($materials as $material)
-        <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 overflow-hidden">
+        <div class="bg-white rounded-lg shadow-md hover:shadow-xl transition duration-300 overflow-hidden {{ auth()->user()->isStudent() ? 'cursor-pointer' : '' }}"
+             @if(auth()->user()->isStudent()) onclick="window.location='{{ route('learning-materials.show', $material) }}'" @endif>
             <!-- Material Type Header -->
             <div class="bg-gradient-to-r from-purple-500 to-indigo-600 p-4 text-white">
                 <div class="flex items-center justify-between mb-2">
@@ -108,15 +120,17 @@
                 <!-- Action Buttons -->
                 <div class="flex gap-2">
                     @if(auth()->user()->isTeacher())
-                        <a href="{{ route('learning-materials.show', $material) }}" 
-                           class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm font-semibold transition duration-200">
+                        <a href="{{ route('learning-materials.show', $material) }}"
+                           class="flex-1 text-center bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm font-semibold transition duration-200"
+                           onclick="event.stopPropagation();">
                             <i class="fas fa-eye mr-1"></i>View
                         </a>
-                        <a href="{{ route('learning-materials.edit', $material) }}" 
-                           class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm font-semibold transition duration-200">
+                        <a href="{{ route('learning-materials.edit', $material) }}"
+                           class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded text-sm font-semibold transition duration-200"
+                           onclick="event.stopPropagation();">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <form action="{{ route('learning-materials.destroy', $material) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this material?');">
+                        <form action="{{ route('learning-materials.destroy', $material) }}" method="POST" class="inline" onsubmit="event.stopPropagation(); return confirm('Are you sure you want to delete this material?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded text-sm font-semibold transition duration-200">
@@ -124,9 +138,10 @@
                             </button>
                         </form>
                     @else
-                        <a href="{{ route('learning-materials.show', $material) }}" 
-                           class="flex-1 text-center bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm font-semibold transition duration-200">
-                            <i class="fas fa-eye mr-1"></i>View & Download
+                        <a href="{{ route('learning-materials.show', $material) }}"
+                           class="flex-1 text-center bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-lg text-sm font-bold transition duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                           onclick="event.stopPropagation();">
+                            <i class="fas fa-download mr-2"></i>View & Download
                         </a>
                     @endif
                 </div>
