@@ -88,6 +88,28 @@
                     View All <i class="fas fa-arrow-right ml-1"></i>
                 </a>
             </div>
+
+            <!-- Sort Dropdown -->
+            <div class="mb-4">
+                <form method="GET" action="{{ route('student.dashboard') }}" id="quizSortForm">
+                    @if(request('game_sort'))
+                        <input type="hidden" name="game_sort" value="{{ request('game_sort') }}">
+                    @endif
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-semibold text-gray-600">Sort by:</label>
+                        <select name="quiz_sort"
+                                onchange="document.getElementById('quizSortForm').submit()"
+                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="alphabet_az" {{ $quizSort == 'alphabet_az' ? 'selected' : '' }}>Alphabet (A-Z)</option>
+                            <option value="alphabet_za" {{ $quizSort == 'alphabet_za' ? 'selected' : '' }}>Alphabet (Z-A)</option>
+                            <option value="date_newest" {{ $quizSort == 'date_newest' ? 'selected' : '' }}>Date (Newest)</option>
+                            <option value="date_oldest" {{ $quizSort == 'date_oldest' ? 'selected' : '' }}>Date (Oldest)</option>
+                            <option value="time_newest" {{ $quizSort == 'time_newest' ? 'selected' : '' }}>Time (Newest)</option>
+                            <option value="time_oldest" {{ $quizSort == 'time_oldest' ? 'selected' : '' }}>Time (Oldest)</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
             @if($recentQuizAttempts->count() > 0)
                 <div class="space-y-3">
                     @foreach($recentQuizAttempts as $attempt)
@@ -127,6 +149,28 @@
                 <a href="{{ route('games.index') }}" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold">
                     View All <i class="fas fa-arrow-right ml-1"></i>
                 </a>
+            </div>
+
+            <!-- Sort Dropdown -->
+            <div class="mb-4">
+                <form method="GET" action="{{ route('student.dashboard') }}" id="gameSortForm">
+                    @if(request('quiz_sort'))
+                        <input type="hidden" name="quiz_sort" value="{{ request('quiz_sort') }}">
+                    @endif
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-semibold text-gray-600">Sort by:</label>
+                        <select name="game_sort"
+                                onchange="document.getElementById('gameSortForm').submit()"
+                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="alphabet_az" {{ $gameSort == 'alphabet_az' ? 'selected' : '' }}>Alphabet (A-Z)</option>
+                            <option value="alphabet_za" {{ $gameSort == 'alphabet_za' ? 'selected' : '' }}>Alphabet (Z-A)</option>
+                            <option value="date_newest" {{ $gameSort == 'date_newest' ? 'selected' : '' }}>Date (Newest)</option>
+                            <option value="date_oldest" {{ $gameSort == 'date_oldest' ? 'selected' : '' }}>Date (Oldest)</option>
+                            <option value="time_newest" {{ $gameSort == 'time_newest' ? 'selected' : '' }}>Time (Newest)</option>
+                            <option value="time_oldest" {{ $gameSort == 'time_oldest' ? 'selected' : '' }}>Time (Oldest)</option>
+                        </select>
+                    </div>
+                </form>
             </div>
             @if($recentGameAttempts->count() > 0)
                 <div class="space-y-3">
