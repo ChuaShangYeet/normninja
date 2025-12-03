@@ -9,6 +9,8 @@ use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class TeacherController extends Controller
 {
@@ -157,5 +159,52 @@ class TeacherController extends Controller
             ->get();
 
         return view('teacher.student-detail', compact('student', 'quizAttempts', 'assignmentSubmissions', 'gameAttempts'));
+    }
+
+    public function showProfile()
+    {
+        $user = auth()->user();
+        return view('teacher.profile', compact('user'));
+    }
+
+    public function editProfile()
+    {
+        $user = auth()->user();
+        return view('teacher.profile-edit', compact('user'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'phone' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:1000',
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        $data = [];
+
+        // Update phone if provided
+        if ($request->filled('phone')) {
+            $data['phone'] = $request->phone;
+        }
+
+        // Update address if provided
+        if ($request->filled('address')) {
+            $data['address'] = $request->address;
+        }
+
+        // Update the user with allowed fields
+        if (!empty($data)) {
+            $user->update($data);
+        }
+
+        // Update password if provided
+        if ($request->filled('password')) {
+            $user->update(['password' => Hash::make($request->password)]);
+        }
+
+        return redirect()->route('teacher.profile')->with('success', 'Profile updated successfully.');
     }
 }

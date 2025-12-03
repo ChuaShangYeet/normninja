@@ -10,6 +10,7 @@ class LearningMaterialController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', LearningMaterial::class);
         if (auth()->user()->isTeacher()) {
             $materials = auth()->user()->learningMaterials()->latest()->paginate(15);
         } else {
@@ -40,7 +41,7 @@ class LearningMaterialController extends Controller
 
         $filePath = null;
         if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('learning-materials', 'public');
+            $filePath = $request->file('file')->store('learning-materials', 'public.storage');
         }
 
         LearningMaterial::create([
@@ -59,9 +60,7 @@ class LearningMaterialController extends Controller
 
     public function show(LearningMaterial $learningMaterial)
     {
-        if (!$learningMaterial->is_published && !auth()->user()->isTeacher()) {
-            abort(403);
-        }
+        $this->authorize('view', $learningMaterial);
 
         return view('learning-materials.show', compact('learningMaterial'));
     }
