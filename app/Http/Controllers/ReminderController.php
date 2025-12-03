@@ -15,7 +15,7 @@ class ReminderController extends Controller
     {
         $reminders = Reminder::where('user_id', Auth::id())
             ->orderBy('is_completed', 'asc')
-            ->orderBy('date', 'asc')
+            ->orderBy('reminder_date', 'asc')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -28,14 +28,20 @@ class ReminderController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'text' => 'required|string|max:500',
-            'date' => 'nullable|date'
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'priority' => 'required|in:low,medium,high',
+            'reminder_date' => 'nullable|date',
+            'text' => 'nullable|string|max:500',
         ]);
 
         $reminder = Reminder::create([
             'user_id' => Auth::id(),
-            'text' => $request->text,
-            'date' => $request->date,
+            'title' => $request->title,
+            'description' => $request->description,
+            'priority' => $request->priority ?? 'medium',
+            'text' => $request->text ?? $request->title,
+            'reminder_date' => $request->reminder_date,
             'is_completed' => false
         ]);
 
@@ -56,13 +62,19 @@ class ReminderController extends Controller
         }
 
         $request->validate([
-            'text' => 'required|string|max:500',
-            'date' => 'nullable|date'
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'priority' => 'required|in:low,medium,high',
+            'reminder_date' => 'nullable|date',
+            'text' => 'nullable|string|max:500',
         ]);
 
         $reminder->update([
-            'text' => $request->text,
-            'date' => $request->date
+            'title' => $request->title,
+            'description' => $request->description,
+            'priority' => $request->priority,
+            'text' => $request->text ?? $request->title,
+            'reminder_date' => $request->reminder_date
         ]);
 
         return response()->json([

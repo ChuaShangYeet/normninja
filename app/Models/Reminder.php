@@ -11,14 +11,17 @@ class Reminder extends Model
 
     protected $fillable = [
         'user_id',
+        'title',
+        'description',
+        'priority',
         'text',
-        'date',
+        'reminder_date',
         'is_completed'
     ];
 
     protected $casts = [
         'is_completed' => 'boolean',
-        'date' => 'date'
+        'reminder_date' => 'datetime'
     ];
 
     /**
@@ -58,7 +61,7 @@ class Reminder extends Model
      */
     public function scopeWithDate($query)
     {
-        return $query->whereNotNull('date');
+        return $query->whereNotNull('reminder_date');
     }
 
     /**
@@ -66,9 +69,9 @@ class Reminder extends Model
      */
     public function scopeUpcoming($query)
     {
-        return $query->whereNotNull('date')
-            ->where('date', '>=', today())
+        return $query->whereNotNull('reminder_date')
+            ->where('reminder_date', '>=', today())
             ->where('is_completed', false)
-            ->orderBy('date', 'asc');
+            ->orderBy('reminder_date', 'asc');
     }
 }
