@@ -149,7 +149,7 @@
         <!-- Sidebar -->
         <div class="lg:col-span-1">
             <!-- Quick Actions -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6 sticky top-4">
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6 top-4">
                 <h3 class="text-lg font-bold text-gray-800 mb-4">
                     <i class="fas fa-bolt mr-2 text-purple-600"></i>Quick Actions
                 </h3>
@@ -242,4 +242,5 @@
         </div>
     </div>
 </div>
+
 @endsection
