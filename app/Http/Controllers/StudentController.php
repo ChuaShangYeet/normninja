@@ -69,23 +69,82 @@ class StudentController extends Controller
         return back();
     }
 
-    public function dashboard()
+    public function dashboard(Request $request)
     {
         $student = auth()->user();
 
-        // Get recent activities
-        $recentQuizAttempts = $student->quizAttempts()
-            ->with('quiz')
-            ->where('is_completed', true)
-            ->latest()
-            ->take(5)
-            ->get();
+        // Get sorting parameters
+        $quizSort = $request->get('quiz_sort', 'date_newest');
+        $gameSort = $request->get('game_sort', 'date_newest');
 
-        $recentGameAttempts = $student->gameAttempts()
-            ->with('game')
-            ->latest()
-            ->take(5)
-            ->get();
+        // Get recent quiz attempts with sorting
+        $quizQuery = $student->quizAttempts()
+            ->with('quiz')
+            ->where('is_completed', true);
+
+        // Apply quiz sorting
+        switch ($quizSort) {
+            case 'alphabet_az':
+                $quizQuery->join('quizzes', 'quiz_attempts.quiz_id', '=', 'quizzes.id')
+                    ->orderBy('quizzes.title', 'asc')
+                    ->select('quiz_attempts.*');
+                break;
+            case 'alphabet_za':
+                $quizQuery->join('quizzes', 'quiz_attempts.quiz_id', '=', 'quizzes.id')
+                    ->orderBy('quizzes.title', 'desc')
+                    ->select('quiz_attempts.*');
+                break;
+            case 'date_oldest':
+                $quizQuery->orderBy('completed_at', 'asc');
+                break;
+            case 'time_oldest':
+                $quizQuery->orderBy('completed_at', 'asc');
+                break;
+            case 'time_newest':
+                $quizQuery->orderBy('completed_at', 'desc');
+                break;
+            case 'date_newest':
+            default:
+                $quizQuery->orderBy('completed_at', 'desc');
+                break;
+        }
+
+        $recentQuizAttempts = $quizQuery->take(5)->get();
+
+        // Get recent game attempts with sorting
+        $gameQuery = $student->gameAttempts()
+            ->with('game');
+
+        // Apply game sorting
+        switch ($gameSort) {
+            case 'alphabet_az':
+                $gameQuery->join('games', 'game_attempts.game_id', '=', 'games.id')
+                    ->orderBy('games.title', 'asc')
+                    ->select('game_attempts.*');
+                break;
+            case 'alphabet_za':
+                $gameQuery->join('games', 'game_attempts.game_id', '=', 'games.id')
+                    ->orderBy('games.title', 'desc')
+                    ->select('game_attempts.*');
+                break;
+            case 'date_oldest':
+                $gameQuery->orderBy('created_at', 'asc');
+                break;
+            case 'date_newest':
+                $gameQuery->orderBy('created_at', 'desc');
+                break;
+            case 'time_oldest':
+                $gameQuery->orderBy('time_spent_seconds', 'asc');
+                break;
+            case 'time_newest':
+                $gameQuery->orderBy('time_spent_seconds', 'desc');
+                break;
+            default:
+                $gameQuery->orderBy('created_at', 'desc');
+                break;
+        }
+
+        $recentGameAttempts = $gameQuery->take(5)->get();
 
         // Calculate average quiz score manually
         $completedAttempts = $student->quizAttempts()
@@ -129,7 +188,9 @@ class StudentController extends Controller
             'availableQuizzes',
             'availableGames',
             'calendarEvents',
-            'reminders'
+            'reminders',
+            'quizSort',
+            'gameSort'
         ));
     }
 
