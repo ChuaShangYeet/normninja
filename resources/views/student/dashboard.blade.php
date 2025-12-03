@@ -358,7 +358,12 @@
 
 <script>
 // Calendar functionality with CRUD
-let currentDate = new Date();
+// Initialize with Malaysia timezone (UTC+8)
+const now = new Date();
+const malaysiaOffset = 8 * 60;
+const localOffset = now.getTimezoneOffset();
+const malaysiaTime = new Date(now.getTime() + (malaysiaOffset + localOffset) * 60000);
+let currentDate = new Date(malaysiaTime.getFullYear(), malaysiaTime.getMonth(), malaysiaTime.getDate());
 let events = [];
 
 // Get CSRF token
@@ -511,9 +516,15 @@ function renderCalendar() {
     
     // Current month days
     const today = new Date();
+    // Get today's date in Malaysia timezone (UTC+8)
+    const malaysiaOffset = 8 * 60; // Malaysia is UTC+8
+    const localOffset = today.getTimezoneOffset();
+    const malaysiaTime = new Date(today.getTime() + (malaysiaOffset + localOffset) * 60000);
+    const todayStr = `${malaysiaTime.getFullYear()}-${String(malaysiaTime.getMonth() + 1).padStart(2, '0')}-${String(malaysiaTime.getDate()).padStart(2, '0')}`;
+
     for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const isToday = dateStr === today.toISOString().split('T')[0];
+        const isToday = dateStr === todayStr;
         
         // Find events for this day (handle both date formats)
         const dayEvents = events.filter(e => {
@@ -616,7 +627,12 @@ function nextMonth() {
 }
 
 function currentMonth() {
-    currentDate = new Date();
+    const now = new Date();
+    // Get current date in Malaysia timezone (UTC+8)
+    const malaysiaOffset = 8 * 60; // Malaysia is UTC+8
+    const localOffset = now.getTimezoneOffset();
+    const malaysiaTime = new Date(now.getTime() + (malaysiaOffset + localOffset) * 60000);
+    currentDate = new Date(malaysiaTime.getFullYear(), malaysiaTime.getMonth(), malaysiaTime.getDate());
     renderCalendar();
 }
 
