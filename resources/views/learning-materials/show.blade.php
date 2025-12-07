@@ -111,7 +111,7 @@
 
                     <!-- Download Button -->
                     <div class="border-t pt-6">
-                        <a href="{{ Storage::url($learningMaterial->file_path) }}" 
+                        <a href="{{ route('learning-materials.download', $learningMaterial) }}"
                            download
                            class="inline-flex items-center bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-bold text-lg transition duration-200">
                             <i class="fas fa-download mr-3"></i>Download Material
@@ -129,7 +129,7 @@
                 
                 @if($learningMaterial->file_type === 'pdf')
                 <div class="border rounded-lg overflow-hidden" style="height: 600px;">
-                    <iframe src="{{ Storage::url($learningMaterial->file_path) }}" 
+                    <iframe src="{{ route('learning-materials.download', $learningMaterial) }}"
                             class="w-full h-full"
                             frameborder="0">
                     </iframe>
@@ -137,7 +137,7 @@
                 @elseif(in_array($learningMaterial->file_type, ['mp4', 'avi', 'mov']))
                 <div class="rounded-lg overflow-hidden bg-black">
                     <video controls class="w-full">
-                        <source src="{{ Storage::url($learningMaterial->file_path) }}" type="video/{{ $learningMaterial->file_type }}">
+                        <source src="{{ route('learning-materials.download', $learningMaterial) }}" type="video/{{ $learningMaterial->file_type }}">
                         Your browser does not support the video tag.
                     </video>
                 </div>
@@ -155,13 +155,13 @@
                 </h3>
                 
                 <div class="space-y-3">
-                    <a href="{{ Storage::url($learningMaterial->file_path) }}" 
+                    <a href="{{ route('learning-materials.download', $learningMaterial) }}"
                        download
                        class="block w-full bg-purple-600 hover:bg-purple-700 text-white text-center px-4 py-3 rounded-lg font-semibold transition duration-200">
                         <i class="fas fa-download mr-2"></i>Download
                     </a>
-                    
-                    <a href="{{ Storage::url($learningMaterial->file_path) }}" 
+
+                    <a href="{{ route('learning-materials.download', $learningMaterial) }}"
                        target="_blank"
                        class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center px-4 py-3 rounded-lg font-semibold transition duration-200">
                         <i class="fas fa-external-link-alt mr-2"></i>Open in New Tab

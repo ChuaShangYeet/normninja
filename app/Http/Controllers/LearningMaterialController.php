@@ -132,4 +132,15 @@ class LearningMaterialController extends Controller
 
         return redirect()->route('learning-materials.index')->with('success', 'Learning material deleted successfully.');
     }
+
+    public function download(LearningMaterial $learningMaterial)
+    {
+        $this->authorize('view', $learningMaterial);
+
+        if (!$learningMaterial->file_path || !Storage::disk('public')->exists($learningMaterial->file_path)) {
+            abort(404, 'File not found.');
+        }
+
+        return Storage::disk('public')->response($learningMaterial->file_path);
+    }
 }

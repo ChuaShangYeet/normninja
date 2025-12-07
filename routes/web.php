@@ -104,6 +104,7 @@ Route::middleware('auth')->group(function () {
     });
 
     // Learning Materials (accessible by teachers and students)
+    Route::get('learning-materials/{learningMaterial}/download', [LearningMaterialController::class, 'download'])->name('learning-materials.download');
     Route::resource('learning-materials', LearningMaterialController::class);
 
     // Quizzes
