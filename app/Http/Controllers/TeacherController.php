@@ -73,13 +73,63 @@ class TeacherController extends Controller
             $totalQuizzes = $teacher->quizzes()->where('is_published', true)->count();
             $completedQuizzes = $quizAttempts->count();
 
+            // Calculate completion rate
+            $completionRate = $totalQuizzes > 0 ? ($completedQuizzes / $totalQuizzes) * 100 : 0;
+
+            // Check for declining performance (compare recent vs earlier attempts)
+            $decliningPerformance = false;
+            if ($quizAttempts->count() >= 3) {
+                $recentAttempts = $quizAttempts->sortByDesc('created_at')->take(3);
+                $earlierAttempts = $quizAttempts->sortBy('created_at')->take(3);
+
+                $recentAvg = 0;
+                $earlierAvg = 0;
+
+                foreach ($recentAttempts as $attempt) {
+                    if ($attempt->total_points > 0) {
+                        $recentAvg += ($attempt->score / $attempt->total_points) * 100;
+                    }
+                }
+                $recentAvg = $recentAvg / 3;
+
+                foreach ($earlierAttempts as $attempt) {
+                    if ($attempt->total_points > 0) {
+                        $earlierAvg += ($attempt->score / $attempt->total_points) * 100;
+                    }
+                }
+                $earlierAvg = $earlierAvg / 3;
+
+                if ($recentAvg < $earlierAvg - 10) {
+                    $decliningPerformance = true;
+                }
+            }
+
             // Determine if student needs support
             $needsSupport = false;
             $supportReasons = [];
 
+            // Criterion 1: Low quiz average
             if ($avgQuizScore < 60 && $completedQuizzes > 0) {
                 $needsSupport = true;
                 $supportReasons[] = "Low quiz average (" . round($avgQuizScore, 2) . "%)";
+            }
+
+            // Criterion 2: Low completion rate
+            if ($totalQuizzes > 0 && $completionRate < 50) {
+                $needsSupport = true;
+                $supportReasons[] = "Low completion rate (" . round($completionRate, 2) . "%)";
+            }
+
+            // Criterion 3: No engagement
+            if ($totalQuizzes > 0 && $completedQuizzes == 0) {
+                $needsSupport = true;
+                $supportReasons[] = "No quiz attempts yet";
+            }
+
+            // Criterion 4: Declining performance
+            if ($decliningPerformance) {
+                $needsSupport = true;
+                $supportReasons[] = "Performance declining over time";
             }
 
             $performanceData[] = [
@@ -87,6 +137,7 @@ class TeacherController extends Controller
                 'avg_quiz_score' => round($avgQuizScore, 2),
                 'completed_quizzes' => $completedQuizzes,
                 'total_quizzes' => $totalQuizzes,
+                'completion_rate' => round($completionRate, 2),
                 'needs_support' => $needsSupport,
                 'support_reasons' => $supportReasons,
             ];

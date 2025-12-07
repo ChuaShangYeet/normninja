@@ -123,7 +123,8 @@
     <!-- Legend -->
     <div class="bg-white rounded-lg shadow-md p-6">
         <h3 class="text-lg font-semibold text-gray-800 mb-4">Support Criteria</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <p class="text-sm text-gray-600 mb-4">Students are flagged as needing support based on one or more of the following criteria:</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div class="flex items-start">
                 <div class="flex-shrink-0">
                     <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
@@ -133,6 +134,39 @@
                 <div class="ml-3">
                     <h4 class="text-sm font-semibold text-gray-900">Low Quiz Performance</h4>
                     <p class="text-sm text-gray-600">Average quiz score below 60%</p>
+                </div>
+            </div>
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <div class="h-8 w-8 rounded-full bg-orange-100 flex items-center justify-center">
+                        <i class="fas fa-tasks text-orange-600"></i>
+                    </div>
+                </div>
+                <div class="ml-3">
+                    <h4 class="text-sm font-semibold text-gray-900">Low Completion Rate</h4>
+                    <p class="text-sm text-gray-600">Completed less than 50% of quizzes</p>
+                </div>
+            </div>
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <div class="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center">
+                        <i class="fas fa-user-clock text-yellow-600"></i>
+                    </div>
+                </div>
+                <div class="ml-3">
+                    <h4 class="text-sm font-semibold text-gray-900">No Engagement</h4>
+                    <p class="text-sm text-gray-600">Has not attempted any quizzes</p>
+                </div>
+            </div>
+            <div class="flex items-start">
+                <div class="flex-shrink-0">
+                    <div class="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center">
+                        <i class="fas fa-arrow-down text-purple-600"></i>
+                    </div>
+                </div>
+                <div class="ml-3">
+                    <h4 class="text-sm font-semibold text-gray-900">Declining Performance</h4>
+                    <p class="text-sm text-gray-600">Recent scores lower than earlier attempts</p>
                 </div>
             </div>
         </div>
