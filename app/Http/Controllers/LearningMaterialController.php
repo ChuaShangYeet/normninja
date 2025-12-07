@@ -8,15 +8,29 @@ use Illuminate\Support\Facades\Storage;
 
 class LearningMaterialController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $this->authorize('viewAny', LearningMaterial::class);
+        $query = $request->input('search');
+
         if (auth()->user()->isTeacher()) {
-            $materials = auth()->user()->learningMaterials()->latest()->paginate(15);
+            $materials = auth()->user()
+                ->learningMaterials()
+                ->when($query, function($q) use ($query) {
+                    $q->where('title', 'like', "%{$query}%")
+                    ->orWhere('description', 'like', "%{$query}%");
+                })
+                ->latest()
+                ->paginate(15);
         } else {
-            $materials = LearningMaterial::where('is_published', true)->latest()->paginate(15);
+            $materials = LearningMaterial::where('is_published', true)
+                ->when($query, function($q) use ($query) {
+                    $q->where('title', 'like', "%{$query}%")
+                    ->orWhere('description', 'like', "%{$query}%");
+                })
+                ->latest()
+                ->paginate(15);
         }
-        
+
         return view('learning-materials.index', compact('materials'));
     }
 
@@ -33,15 +47,17 @@ class LearningMaterialController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,mp4,avi,mov|max:51200', // 50MB
+            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,mp4,avi,mov|max:40960',
             'subject' => 'nullable|string',
             'grade_level' => 'nullable|integer',
             'is_published' => 'boolean',
+        ], [
+            'file.max' => 'The file size is too large. Maximum allowed size is 40MB.',
         ]);
 
         $filePath = null;
         if ($request->hasFile('file')) {
-            $filePath = $request->file('file')->store('learning-materials', 'public.storage');
+            $filePath = $request->file('file')->store('learning-materials', 'public');
         }
 
         LearningMaterial::create([
@@ -78,10 +94,12 @@ class LearningMaterialController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,mp4,avi,mov|max:51200',
+            'file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,mp4,avi,mov|max:40960',
             'subject' => 'nullable|string',
             'grade_level' => 'nullable|integer',
             'is_published' => 'boolean',
+        ], [
+            'file.max' => 'The file size is too large. Maximum allowed size is 40MB.',
         ]);
 
         $data = $request->only(['title', 'description', 'subject', 'grade_level']);
@@ -92,7 +110,7 @@ class LearningMaterialController extends Controller
             if ($learningMaterial->file_path) {
                 Storage::disk('public')->delete($learningMaterial->file_path);
             }
-            
+
             $data['file_path'] = $request->file('file')->store('learning-materials', 'public');
             $data['file_type'] = $request->file('file')->getClientOriginalExtension();
         }
