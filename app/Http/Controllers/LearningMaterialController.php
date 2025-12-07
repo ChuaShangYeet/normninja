@@ -132,4 +132,34 @@ class LearningMaterialController extends Controller
 
         return redirect()->route('learning-materials.index')->with('success', 'Learning material deleted successfully.');
     }
+
+    public function download(LearningMaterial $learningMaterial)
+    {
+        $this->authorize('view', $learningMaterial);
+
+        if (!$learningMaterial->file_path || !Storage::disk('public')->exists($learningMaterial->file_path)) {
+            abort(404, 'File not found.');
+        }
+
+        $filePath = Storage::disk('public')->path($learningMaterial->file_path);
+        $fileName = basename($learningMaterial->file_path);
+
+        // Get MIME type based on file extension
+        $mimeType = match($learningMaterial->file_type) {
+            'pdf' => 'application/pdf',
+            'doc' => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'ppt' => 'application/vnd.ms-powerpoint',
+            'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'mp4' => 'video/mp4',
+            'avi' => 'video/x-msvideo',
+            'mov' => 'video/quicktime',
+            default => 'application/octet-stream',
+        };
+
+        return response()->file($filePath, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . $fileName . '"',
+        ]);
+    }
 }
