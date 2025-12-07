@@ -88,16 +88,6 @@ class User extends Authenticatable
         return $this->hasMany(ForumPost::class);
     }
 
-    public function assignments()
-    {
-        return $this->hasMany(Assignment::class, 'teacher_id');
-    }
-
-    public function assignmentSubmissions()
-    {
-        return $this->hasMany(AssignmentSubmission::class, 'student_id');
-    }
-
     public function calendarEvents()
     {
         return $this->hasMany(CalendarEvent::class);
