@@ -135,17 +135,6 @@
                     <p class="text-sm text-gray-600">Average quiz score below 60%</p>
                 </div>
             </div>
-            <div class="flex items-start">
-                <div class="flex-shrink-0">
-                    <div class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center">
-                        <i class="fas fa-file-alt text-red-600"></i>
-                    </div>
-                </div>
-                <div class="ml-3">
-                    <h4 class="text-sm font-semibold text-gray-900">Missing Assignments</h4>
-                    <p class="text-sm text-gray-600">One or more assignments not submitted</p>
-                </div>
-            </div>
         </div>
     </div>
 </div>

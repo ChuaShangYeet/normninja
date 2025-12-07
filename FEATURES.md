@@ -165,23 +165,16 @@ The system automatically identifies students requiring academic support based on
    - Multiple failed attempts
    - Low completion rate
 
-2. **Assignment Criteria:**
-   - Missing assignments
-   - Late submissions
-   - Incomplete work
-
 **Performance Dashboard Shows:**
 - Student list with performance indicators
 - Visual progress bars
 - Quiz completion rates
-- Assignment submission status
 - Support status (On Track / Needs Support)
 - Specific support reasons for each student
 - Individual student detail views
 
 **Individual Student View:**
 - Complete quiz history with scores
-- All assignment submissions
 - Game attempt records
 - Progress over time
 - Engagement metrics
@@ -350,13 +343,6 @@ The system automatically identifies students requiring academic support based on
 - Hierarchical structure (parent-child)
 - Soft deletes
 - User attribution
-
-### Assignments & Submissions
-- Due date tracking
-- File submissions
-- Grading system
-- Feedback mechanism
-- Status tracking (submitted, graded, late, missing)
 
 ---
 
