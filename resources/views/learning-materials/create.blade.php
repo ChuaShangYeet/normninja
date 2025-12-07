@@ -17,7 +17,7 @@
 
     <!-- Form -->
     <div class="bg-white rounded-lg shadow-md p-8 max-w-3xl">
-        <form action="{{ route('learning-materials.store') }}" method="POST" enctype="multipart/form-data">
+        <form id="uploadForm" action="{{ route('learning-materials.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <!-- Title -->
@@ -53,29 +53,68 @@
             </div>
 
             <!-- File Upload -->
-            <div class="mb-6">
-                <label for="file" class="block text-gray-700 font-semibold mb-2">
-                    File <span class="text-red-500">*</span>
-                </label>
-                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-purple-500 transition">
-                    <input type="file" 
-                           name="file" 
-                           id="file" 
-                           class="hidden"
-                           accept=".pdf,.doc,.docx,.ppt,.pptx,.mp4,.avi,.mov"
-                           required
-                           onchange="updateFileName(this)">
-                    <label for="file" class="cursor-pointer">
-                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
-                        <p class="text-gray-600 mb-1">Click to upload or drag and drop</p>
-                        <p class="text-sm text-gray-500">PDF, DOC, PPT, or Video (Max 50MB)</p>
-                        <p id="file-name" class="text-sm text-purple-600 font-semibold mt-2"></p>
-                    </label>
+            <div id="drop-area" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-purple-500 transition cursor-pointer">
+                <input type="file"
+                    name="file"
+                    id="fileInput"
+                    class="hidden"
+                    accept=".pdf,.doc,.docx,.ppt,.pptx,.mp4,.avi,.mov"
+                    required onchange="updateFileName(this)">
+                <div>
+                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                    <p class="text-gray-600 mb-1">Click to upload or drag and drop</p>
+                    <p class="text-sm text-gray-500">PDF, DOC, PPT, or Video (Max 40MB)</p>
+                    <p id="file-name" class="text-sm text-purple-600 font-semibold mt-2"></p>
                 </div>
-                @error('file')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
             </div>
+
+            <script>
+            const MAX_SIZE_MB = 40;
+            const dropArea = document.getElementById('drop-area');
+            const fileInput = document.getElementById('fileInput');
+            const fileNameDisplay = document.getElementById('file-name');
+
+            // Open file dialog when drop area is clicked
+            dropArea.addEventListener('click', () => fileInput.click());
+
+            // Show file name and check size
+            fileInput.addEventListener('change', handleFiles);
+
+            function handleFiles() {
+                const file = fileInput.files[0];
+                if (!file) return;
+
+                if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+                    alert(`File is too large! Maximum allowed size is ${MAX_SIZE_MB} MB.`);
+                    fileInput.value = '';
+                    fileNameDisplay.textContent = '';
+                } else {
+                    fileNameDisplay.textContent = `📎 ${file.name}`;
+                }
+            }
+
+            // Drag & drop visual feedback
+            dropArea.addEventListener('dragover', e => {
+                e.preventDefault();
+                dropArea.classList.add('border-purple-500', 'bg-purple-50');
+            });
+
+            dropArea.addEventListener('dragleave', e => {
+                e.preventDefault();
+                dropArea.classList.remove('border-purple-500', 'bg-purple-50');
+            });
+
+            dropArea.addEventListener('drop', e => {
+                e.preventDefault();
+                dropArea.classList.remove('border-purple-500', 'bg-purple-50');
+
+                const files = e.dataTransfer.files;
+                if (files.length) {
+                    fileInput.files = files; // assign dropped file
+                    handleFiles();
+                }
+            });
+            </script>
 
             <!-- Subject and Grade Level Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -141,7 +180,7 @@
                                 <li><strong>Documents:</strong> PDF, DOC, DOCX</li>
                                 <li><strong>Presentations:</strong> PPT, PPTX</li>
                                 <li><strong>Videos:</strong> MP4, AVI, MOV</li>
-                                <li><strong>Max Size:</strong> 50 MB per file</li>
+                                <li><strong>Max Size:</strong> 40 MB per file</li>
                             </ul>
                         </div>
                     </div>
@@ -174,4 +213,5 @@ function updateFileName(input) {
     }
 }
 </script>
+
 @endsection
