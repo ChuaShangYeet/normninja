@@ -21,6 +21,27 @@
         <?php endif; ?>
     </div>
 
+    <!-- Search Bar (Student Only) -->
+    <?php if(!auth()->user()->isTeacher()): ?>
+    <div class="mb-6">
+        <form action="<?php echo e(route('learning-materials.index')); ?>" method="GET">
+            <div class="flex">
+                <input
+                    type="text"
+                    name="search"
+                    class="w-full border border-gray-300 rounded-l-lg px-4 py-2 focus:ring-purple-500 focus:border-purple-500"
+                    placeholder="Search materials..."
+                    value="<?php echo e(request('search')); ?>"
+                >
+                <button
+                    class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-r-lg font-semibold transition duration-200">
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
+    <?php endif; ?>
+
     <!-- Success Message -->
     <?php if(session('success')): ?>
     <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded">
@@ -168,5 +189,4 @@
     <?php endif; ?>
 </div>
 <?php $__env->stopSection(); ?>
-
 <?php echo $__env->make('layouts.app', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\normninja\resources\views/learning-materials/index.blade.php ENDPATH**/ ?>

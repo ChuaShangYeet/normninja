@@ -19,7 +19,7 @@
             <div class="p-6">
                 <!-- Personal Information Section -->
                 <div class="border-b pb-6 mb-6">
-                    <h2 class="text-lg font-semibold text-gray-700 mb-4">Personal Information</h2>
+                    <h2 class="text-lg font-semibold text-gray-700 mb-4">Account Information</h2>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Full Name -->
@@ -27,7 +27,7 @@
                             <label class="block text-sm font-medium text-gray-500 mb-1">
                                 <i class="fas fa-user mr-2 text-indigo-600"></i>Full Name
                             </label>
-                            <p class="text-gray-900 text-lg"><?php echo e($user->name); ?></p>
+                            <p class="text-gray-900 font-medium"><?php echo e($user->name); ?></p>
                         </div>
 
                         <!-- Email Address -->
@@ -35,7 +35,7 @@
                             <label class="block text-sm font-medium text-gray-500 mb-1">
                                 <i class="fas fa-envelope mr-2 text-indigo-600"></i>Email Address
                             </label>
-                            <p class="text-gray-900 text-lg"><?php echo e($user->email); ?></p>
+                            <p class="text-gray-900 font-medium"><?php echo e($user->email); ?></p>
                         </div>
 
                         <!-- Student ID -->
@@ -43,7 +43,7 @@
                             <label class="block text-sm font-medium text-gray-500 mb-1">
                                 <i class="fas fa-id-card mr-2 text-indigo-600"></i>Student ID
                             </label>
-                            <p class="text-gray-900 text-lg"><?php echo e($user->student_id ?? 'N/A'); ?></p>
+                            <p class="text-gray-900 font-medium"><?php echo e($user->student_id ?? 'N/A'); ?></p>
                         </div>
 
                         <!-- Date of Birth -->
@@ -51,7 +51,7 @@
                             <label class="block text-sm font-medium text-gray-500 mb-1">
                                 <i class="fas fa-calendar mr-2 text-indigo-600"></i>Date of Birth
                             </label>
-                            <p class="text-gray-900 text-lg">
+                            <p class="text-gray-900 font-medium">
                                 <?php echo e($user->date_of_birth ? \Carbon\Carbon::parse($user->date_of_birth)->format('F d, Y') : 'N/A'); ?>
 
                             </p>
@@ -69,7 +69,7 @@
                             <label class="block text-sm font-medium text-gray-500 mb-1">
                                 <i class="fas fa-phone mr-2 text-indigo-600"></i>Phone Number
                             </label>
-                            <p class="text-gray-900 text-lg"><?php echo e($user->phone ?? 'Not provided'); ?></p>
+                            <p class="text-gray-900 font-medium"><?php echo e($user->phone ?? 'Not provided'); ?></p>
                         </div>
 
                         <!-- Address -->
@@ -77,7 +77,7 @@
                             <label class="block text-sm font-medium text-gray-500 mb-1">
                                 <i class="fas fa-map-marker-alt mr-2 text-indigo-600"></i>Address
                             </label>
-                            <p class="text-gray-900 text-lg"><?php echo e($user->address ?? 'Not provided'); ?></p>
+                            <p class="text-gray-900 font-medium"><?php echo e($user->address ?? 'Not provided'); ?></p>
                         </div>
                     </div>
                 </div>

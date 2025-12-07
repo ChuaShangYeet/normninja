@@ -10,7 +10,7 @@
 
     <!-- Alert for Students Needing Support -->
     <?php
-        $studentsNeedingSupport = collect($performance)->filter(function($data) {
+        $studentsNeedingSupport = collect($performanceData)->filter(function($data) {
             return $data['needs_support'];
         });
     ?>
@@ -44,9 +44,6 @@
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Quiz Performance
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Assignment Status
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Status
@@ -96,22 +93,6 @@
                             </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <div class="text-sm text-gray-900">
-                                <?php echo e($data['submitted_assignments']); ?>/<?php echo e($data['total_assignments']); ?> submitted
-                            </div>
-                            <?php if($data['missing_assignments'] > 0): ?>
-                                <div class="text-xs text-red-600 font-semibold mt-1">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    <?php echo e($data['missing_assignments']); ?> missing
-                                </div>
-                            <?php else: ?>
-                                <div class="text-xs text-green-600 font-semibold mt-1">
-                                    <i class="fas fa-check-circle"></i>
-                                    All submitted
-                                </div>
-                            <?php endif; ?>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
                             <?php if($data['needs_support']): ?>
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                                     <i class="fas fa-hand-paper mr-1"></i>
@@ -131,13 +112,6 @@
                                     On Track
                                 </span>
                             <?php endif; ?>
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="<?php echo e(route('teacher.student.detail', $data['student']->id)); ?>" 
-                               class="text-indigo-600 hover:text-indigo-900">
-                                <i class="fas fa-eye mr-1"></i>
-                                View Details
-                            </a>
                         </td>
                     </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>

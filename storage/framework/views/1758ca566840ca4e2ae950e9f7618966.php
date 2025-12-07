@@ -86,6 +86,28 @@
                     View All <i class="fas fa-arrow-right ml-1"></i>
                 </a>
             </div>
+
+            <!-- Sort Dropdown -->
+            <div class="mb-4">
+                <form method="GET" action="<?php echo e(route('student.dashboard')); ?>" id="quizSortForm">
+                    <?php if(request('game_sort')): ?>
+                        <input type="hidden" name="game_sort" value="<?php echo e(request('game_sort')); ?>">
+                    <?php endif; ?>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-semibold text-gray-600">Sort by:</label>
+                        <select name="quiz_sort"
+                                onchange="document.getElementById('quizSortForm').submit()"
+                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="alphabet_az" <?php echo e($quizSort == 'alphabet_az' ? 'selected' : ''); ?>>Alphabet (A-Z)</option>
+                            <option value="alphabet_za" <?php echo e($quizSort == 'alphabet_za' ? 'selected' : ''); ?>>Alphabet (Z-A)</option>
+                            <option value="date_newest" <?php echo e($quizSort == 'date_newest' ? 'selected' : ''); ?>>Date (Newest)</option>
+                            <option value="date_oldest" <?php echo e($quizSort == 'date_oldest' ? 'selected' : ''); ?>>Date (Oldest)</option>
+                            <option value="time_newest" <?php echo e($quizSort == 'time_newest' ? 'selected' : ''); ?>>Time (Newest)</option>
+                            <option value="time_oldest" <?php echo e($quizSort == 'time_oldest' ? 'selected' : ''); ?>>Time (Oldest)</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
             <?php if($recentQuizAttempts->count() > 0): ?>
                 <div class="space-y-3">
                     <?php $__currentLoopData = $recentQuizAttempts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $attempt): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -127,6 +149,28 @@
                     View All <i class="fas fa-arrow-right ml-1"></i>
                 </a>
             </div>
+
+            <!-- Sort Dropdown -->
+            <div class="mb-4">
+                <form method="GET" action="<?php echo e(route('student.dashboard')); ?>" id="gameSortForm">
+                    <?php if(request('quiz_sort')): ?>
+                        <input type="hidden" name="quiz_sort" value="<?php echo e(request('quiz_sort')); ?>">
+                    <?php endif; ?>
+                    <div class="flex items-center gap-2">
+                        <label class="text-sm font-semibold text-gray-600">Sort by:</label>
+                        <select name="game_sort"
+                                onchange="document.getElementById('gameSortForm').submit()"
+                                class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="alphabet_az" <?php echo e($gameSort == 'alphabet_az' ? 'selected' : ''); ?>>Alphabet (A-Z)</option>
+                            <option value="alphabet_za" <?php echo e($gameSort == 'alphabet_za' ? 'selected' : ''); ?>>Alphabet (Z-A)</option>
+                            <option value="date_newest" <?php echo e($gameSort == 'date_newest' ? 'selected' : ''); ?>>Date (Newest)</option>
+                            <option value="date_oldest" <?php echo e($gameSort == 'date_oldest' ? 'selected' : ''); ?>>Date (Oldest)</option>
+                            <option value="time_newest" <?php echo e($gameSort == 'time_newest' ? 'selected' : ''); ?>>Time (Newest)</option>
+                            <option value="time_oldest" <?php echo e($gameSort == 'time_oldest' ? 'selected' : ''); ?>>Time (Oldest)</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
             <?php if($recentGameAttempts->count() > 0): ?>
                 <div class="space-y-3">
                     <?php $__currentLoopData = $recentGameAttempts; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $attempt): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -164,16 +208,16 @@
     </div>
 
     <!-- Calendar Section -->
-    <div>
-        <!-- Schedule Calendar -->
-        <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Calendar (2/3 width) -->
+        <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-gray-800">
                     <i class="fas fa-calendar text-indigo-600 mr-2"></i>
                     Schedule Calendar
                 </h2>
             </div>
-            
+
             <!-- Calendar Navigation -->
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-gray-800" id="currentMonth"></h3>
@@ -202,7 +246,7 @@
                     <div class="p-2 text-center text-xs font-semibold text-gray-600">Fri</div>
                     <div class="p-2 text-center text-xs font-semibold text-gray-600">Sat</div>
                 </div>
-                
+
                 <!-- Calendar Days -->
                 <div id="calendarDays" class="grid grid-cols-7">
                     <!-- Days will be populated by JavaScript -->
@@ -213,9 +257,12 @@
             <button onclick="openAddEventModal()" class="mt-4 w-full bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">
                 <i class="fas fa-plus mr-2"></i>Add Event
             </button>
+        </div>
 
-            <!-- Events List -->
-            <div id="eventsList" class="mt-4 space-y-2 max-h-60 overflow-y-auto">
+        <!-- Events List (1/3 width) -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Upcoming Events</h3>
+            <div id="eventsList" class="space-y-2 max-h-[500px] overflow-y-auto">
                 <!-- Events will be populated here -->
             </div>
         </div>
@@ -356,7 +403,12 @@
 
 <script>
 // Calendar functionality with CRUD
-let currentDate = new Date();
+// Initialize with Malaysia timezone (UTC+8)
+const now = new Date();
+const malaysiaOffset = 8 * 60;
+const localOffset = now.getTimezoneOffset();
+const malaysiaTime = new Date(now.getTime() + (malaysiaOffset + localOffset) * 60000);
+let currentDate = new Date(malaysiaTime.getFullYear(), malaysiaTime.getMonth(), malaysiaTime.getDate());
 let events = [];
 
 // Get CSRF token
@@ -509,9 +561,15 @@ function renderCalendar() {
     
     // Current month days
     const today = new Date();
+    // Get today's date in Malaysia timezone (UTC+8)
+    const malaysiaOffset = 8 * 60; // Malaysia is UTC+8
+    const localOffset = today.getTimezoneOffset();
+    const malaysiaTime = new Date(today.getTime() + (malaysiaOffset + localOffset) * 60000);
+    const todayStr = `${malaysiaTime.getFullYear()}-${String(malaysiaTime.getMonth() + 1).padStart(2, '0')}-${String(malaysiaTime.getDate()).padStart(2, '0')}`;
+
     for (let day = 1; day <= daysInMonth; day++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const isToday = dateStr === today.toISOString().split('T')[0];
+        const isToday = dateStr === todayStr;
         
         // Find events for this day (handle both date formats)
         const dayEvents = events.filter(e => {
@@ -614,7 +672,12 @@ function nextMonth() {
 }
 
 function currentMonth() {
-    currentDate = new Date();
+    const now = new Date();
+    // Get current date in Malaysia timezone (UTC+8)
+    const malaysiaOffset = 8 * 60; // Malaysia is UTC+8
+    const localOffset = now.getTimezoneOffset();
+    const malaysiaTime = new Date(now.getTime() + (malaysiaOffset + localOffset) * 60000);
+    currentDate = new Date(malaysiaTime.getFullYear(), malaysiaTime.getMonth(), malaysiaTime.getDate());
     renderCalendar();
 }
 
