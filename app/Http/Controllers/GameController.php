@@ -178,4 +178,57 @@ class GameController extends Controller
 
         return view('games.statistics', compact('game', 'attempts', 'stats'));
     }
+
+    public function leaderboard(Request $request, Game $game = null)
+    {
+        // If a specific game is provided, show leaderboard for that game only
+        if ($game) {
+            if (!$game->is_published && !auth()->user()->isTeacher()) {
+                abort(403);
+            }
+
+            // Get best attempt per student for this specific game
+            $leaderboard = GameAttempt::where('game_id', $game->id)
+                ->where('is_completed', true)
+                ->with('student')
+                ->selectRaw('student_id, MAX(score) as best_score, MIN(time_spent_seconds) as best_time')
+                ->groupBy('student_id')
+                ->orderByDesc('best_score')
+                ->orderBy('best_time')
+                ->get()
+                ->map(function ($attempt, $index) use ($game) {
+                    return [
+                        'rank' => $index + 1,
+                        'student' => $attempt->student,
+                        'score' => $attempt->best_score,
+                        'time' => $attempt->best_time,
+                    ];
+                });
+
+            return view('games.leaderboard', compact('game', 'leaderboard'));
+        }
+
+        // Overall leaderboard across all games
+        $leaderboard = GameAttempt::where('is_completed', true)
+            ->with('student')
+            ->selectRaw('student_id, SUM(score) as total_score, COUNT(*) as games_played, AVG(score) as avg_score')
+            ->groupBy('student_id')
+            ->orderByDesc('total_score')
+            ->orderByDesc('games_played')
+            ->get()
+            ->map(function ($attempt, $index) {
+                return [
+                    'rank' => $index + 1,
+                    'student' => $attempt->student,
+                    'total_score' => $attempt->total_score,
+                    'games_played' => $attempt->games_played,
+                    'avg_score' => round($attempt->avg_score, 1),
+                ];
+            });
+
+        // Get list of published games for filter
+        $games = Game::where('is_published', true)->orderBy('title')->get();
+
+        return view('games.leaderboard', compact('leaderboard', 'games', 'game'));
+    }
 }

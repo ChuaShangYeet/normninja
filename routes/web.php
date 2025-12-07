@@ -130,8 +130,10 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['auth'])->group(function () {
         Route::get('games', [GameController::class, 'index'])->name('games.index');
+        Route::get('games/leaderboard', [GameController::class, 'leaderboard'])->name('games.leaderboard');
         Route::get('games/{game}', [GameController::class, 'show'])->name('games.show');
         Route::get('games/{game}/play', [GameController::class, 'play'])->name('games.play');
+        Route::get('games/{game}/leaderboard', [GameController::class, 'leaderboard'])->name('games.leaderboard.game');
         Route::post('games/{game}/submit', [GameController::class, 'submitAttempt'])->name('games.submit');
         Route::get('game-attempts/{attempt}/results', [GameController::class, 'results'])->name('games.results');
 });

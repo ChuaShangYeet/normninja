@@ -16,11 +16,18 @@
                 @endif
             </p>
         </div>
-        @if(auth()->user()->isTeacher())
-        <a href="{{ route('games.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition duration-200">
-            <i class="fas fa-plus mr-2"></i>Create Game
-        </a>
-        @endif
+        <div class="flex gap-3">
+            @if(auth()->user()->isStudent())
+                <a href="{{ route('games.leaderboard') }}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition duration-200">
+                    <i class="fas fa-trophy mr-2"></i>View Leaderboard
+                </a>
+            @endif
+            @if(auth()->user()->isTeacher())
+                <a href="{{ route('games.create') }}" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition duration-200">
+                    <i class="fas fa-plus mr-2"></i>Create Game
+                </a>
+            @endif
+        </div>
     </div>
 
     <!-- Success Message -->

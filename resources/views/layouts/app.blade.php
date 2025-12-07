@@ -71,6 +71,9 @@
                         <a href="{{ route('games.index') }}" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
                             <i class="fas fa-gamepad mr-2"></i>Games
                         </a>
+                        <a href="{{ route('games.leaderboard') }}" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
+                            <i class="fas fa-trophy mr-2"></i>Leaderboard
+                        </a>
                         <a href="{{ route('forums.index') }}" class="hover:bg-indigo-700 px-3 py-2 rounded-md">
                             <i class="fas fa-comments mr-2"></i>Forums
                         </a>
