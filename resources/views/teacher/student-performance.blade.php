@@ -113,13 +113,6 @@
                                 </span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="{{ route('teacher.student.detail', $data['student']->id) }}" 
-                               class="text-indigo-600 hover:text-indigo-900">
-                                <i class="fas fa-eye mr-1"></i>
-                                View Details
-                            </a>
-                        </td>
                     </tr>
                     @endforeach
                 </tbody>
