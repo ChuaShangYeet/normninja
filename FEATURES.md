@@ -158,12 +158,19 @@ Teachers can upload and manage educational content:
 
 **Key Feature: Identifying Students Who Need Support**
 
-The system automatically identifies students requiring academic support based on:
+The system automatically identifies students requiring academic support based on multiple criteria:
 
-1. **Quiz Performance Criteria:**
+1. **Low Quiz Performance**
    - Average quiz score below 60%
-   - Multiple failed attempts
-   - Low completion rate
+
+2. **Low Completion Rate**
+   - Completed less than 50% of available quizzes
+
+3. **No Engagement**
+   - Has not attempted any quizzes yet
+
+4. **Declining Performance**
+   - Recent quiz scores are significantly lower than earlier attempts (10% drop or more)
 
 **Performance Dashboard Shows:**
 - Student list with performance indicators
