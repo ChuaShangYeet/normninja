@@ -5,7 +5,7 @@
 @section('content')
 <div class="container mx-auto px-4 py-8">
     <!-- Header -->
-    <div class="mb-8">
+    <div class="mb-8 text-center">
         <div class="flex items-center mb-4">
             <a href="{{ route('learning-materials.index') }}" class="text-purple-600 hover:text-purple-800 mr-4">
                 <i class="fas fa-arrow-left"></i> Back to Materials
@@ -16,7 +16,7 @@
     </div>
 
     <!-- Form -->
-    <div class="bg-white rounded-lg shadow-md p-8 max-w-3xl">
+    <div class="bg-white rounded-lg shadow-md p-8 max-w-3xl mx-auto">
         <form id="uploadForm" action="{{ route('learning-materials.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
@@ -115,43 +115,6 @@
                 }
             });
             </script>
-
-            <!-- Subject and Grade Level Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <!-- Subject -->
-                <div>
-                    <label for="subject" class="block text-gray-700 font-semibold mb-2">
-                        Subject
-                    </label>
-                    <input type="text" 
-                           name="subject" 
-                           id="subject" 
-                           value="{{ old('subject') }}"
-                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                           placeholder="e.g., Mathematics, Science">
-                    @error('subject')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-
-                <!-- Grade Level -->
-                <div>
-                    <label for="grade_level" class="block text-gray-700 font-semibold mb-2">
-                        Grade Level
-                    </label>
-                    <input type="number" 
-                           name="grade_level" 
-                           id="grade_level" 
-                           value="{{ old('grade_level') }}"
-                           min="1"
-                           max="12"
-                           class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                           placeholder="e.g., 9">
-                    @error('grade_level')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-            </div>
 
             <!-- Published Status -->
             <div class="mb-6">
