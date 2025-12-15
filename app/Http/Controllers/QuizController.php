@@ -96,12 +96,22 @@ class QuizController extends Controller
         $wasUnpublished = !$quiz->is_published;
         $willBePublished = $request->boolean('is_published');
 
-        $quiz->update($request->all());
+        $quiz->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'subject' => $request->subject,
+            'duration_minutes' => $request->duration_minutes,
+            'passing_score' => $request->passing_score,
+            'is_published' => $request->boolean('is_published'),
+            'available_from' => $request->available_from,
+            'available_until' => $request->available_until,
+        ]);
+
 
         // Notify students if quiz is being published for the first time
-        if ($wasUnpublished && $willBePublished) {
-            $this->notifyStudentsAboutNewContent('quiz', $quiz);
-        }
+        // if ($wasUnpublished && $willBePublished) {
+        //     $this->notifyStudentsAboutNewContent('quiz', $quiz);
+        // }
 
         return redirect()->route('quizzes.index')->with('success', 'Quiz updated successfully.');
     }

@@ -127,7 +127,7 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
             'teacher_id' => 'required|string|unique:users',
             'phone' => 'nullable|string',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
@@ -169,27 +169,15 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $teacher->id,
             'teacher_id' => 'required|string|unique:users,teacher_id,' . $teacher->id,
             'phone' => 'nullable|string',
-            'password' => 'nullable|string|min:8|confirmed',
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'address' => 'nullable|string',
+            'date_of_birth' => 'nullable|date',
             'is_active' => 'boolean',
         ]);
 
-        $data = $request->only([
-            'name', 'email', 'teacher_id', 'phone', 'is_active'
-        ]);
+        $teacher->update($request->only([
+            'name', 'email', 'teacher_id', 'phone', 'address', 'date_of_birth', 'is_active'
+        ]));
 
-        // Handle profile picture upload
-        if ($request->hasFile('profile_picture')) {
-            // Delete old profile picture if exists
-            if ($teacher->profile_picture) {
-                Storage::disk('public')->delete($teacher->profile_picture);
-            }
-            $data['profile_picture'] = $request->file('profile_picture')->store('profile_pictures', 'public');
-        }
-
-        $teacher->update($data);
-
-        // Update password if provided
         if ($request->filled('password')) {
             $teacher->update(['password' => Hash::make($request->password)]);
         }
@@ -210,5 +198,11 @@ class AdminController extends Controller
         
         $teacher->delete();
         return redirect()->route('admin.teachers.index')->with('success', 'Teacher deleted successfully.');
+    }
+
+    public function showProfile()
+    {
+        $user = auth()->user();
+        return view('admin.profile-view', compact('user'));
     }
 }
