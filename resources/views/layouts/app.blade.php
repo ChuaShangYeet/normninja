@@ -14,7 +14,7 @@
     
     @stack('styles')
 </head>
-<body class="bg-gray-100 flex-col">
+<body class="bg-gray-100 flex-col min-h-screen relative">
     <!-- Navigation -->
     <nav class="bg-white-600 text-indigo shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -132,13 +132,13 @@
     @endif
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-4">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-4 pb-32 flex-grow">
         @yield('content')
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 mt-72">
+    <footer class="bg-gray-800 text-white absolute bottom-0 w-full">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div class="text-center">
                 <p>&copy; {{ date('Y') }} NormNinja - Data Voyagers Team. All rights reserved.</p>
             </div>
