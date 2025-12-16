@@ -10,7 +10,6 @@
     <div class="bg-white rounded-lg shadow-2xl p-8 w-full max-w-md">
         <div class="text-center mb-8">
             <img src="/images/logo.png" alt="NormNinja Logo" class="h-20 w-auto mx-auto mb-4" onerror="this.style.display='none'">
-            <h1 class="text-3xl font-bold text-gray-800">NormNinja</h1>
             <p class="text-gray-600 mt-2">Learning Management System</p>
         </div>
 

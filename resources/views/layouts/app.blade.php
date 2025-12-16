@@ -99,6 +99,10 @@
                                     <a href="{{ route('teacher.profile') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
                                         <i class="fas fa-user mr-2"></i>My Profile
                                     </a>
+                                @elseif(auth()->user()->isAdmin())
+                                    <a href="{{ route('admin.profile') }}" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150">
+                                        <i class="fas fa-user-shield mr-2"></i>My Profile
+                                    </a>
                                 @endif
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
