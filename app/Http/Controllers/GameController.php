@@ -88,7 +88,14 @@ class GameController extends Controller
         $wasUnpublished = !$game->is_published;
         $willBePublished = $request->boolean('is_published');
 
-        $game->update($request->all());
+        $game->update([
+            'title' => $request->title,
+            'description' => $request->description,
+            'game_type' => $request->game_type,
+            'subject' => $request->subject,
+            'game_data' => $request->game_data,
+            'is_published' => $request->boolean('is_published'),
+        ]);
 
         return redirect()->route('games.index')->with('success', 'Game updated successfully.');
     }
