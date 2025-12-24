@@ -36,11 +36,17 @@
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
             </div>
 
-            <div class="mb-6">
+            <div class="mb-4">
                 <label class="flex items-center">
                     <input type="checkbox" name="remember" class="mr-2">
                     <span class="text-gray-700">Remember me</span>
                 </label>
+            </div>
+
+            <div class="mb-6 text-right">
+                <a href="#" onclick="showForgotPasswordModal(); return false;" class="text-indigo-600 hover:text-indigo-800 text-sm font-semibold">
+                    Forgot Password?
+                </a>
             </div>
 
             <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition duration-200 font-semibold">
@@ -49,10 +55,42 @@
         </form>
 
         <!--<div class="mt-6 text-center">
-            <p class="text-gray-600">Don't have an account? 
+            <p class="text-gray-600">Don't have an account?
                 <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-800 font-semibold">Register here</a>
             </p>
         </div>-->
     </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotPasswordModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Forgot Password?</h2>
+            <p class="text-gray-600 mb-2">Please contact the administrator to reset your password:</p>
+            <div class="bg-indigo-50 border-l-4 border-indigo-600 p-4 mb-6">
+                <p class="text-gray-700 font-semibold">Admin Contact:</p>
+                <p class="text-indigo-600 text-lg font-bold">+60123456789</p>
+            </div>
+            <button onclick="closeForgotPasswordModal()" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition duration-200 font-semibold">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function showForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').classList.remove('hidden');
+        }
+
+        function closeForgotPasswordModal() {
+            document.getElementById('forgotPasswordModal').classList.add('hidden');
+        }
+
+        // Close modal when clicking outside of it
+        document.getElementById('forgotPasswordModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeForgotPasswordModal();
+            }
+        });
+    </script>
 </body>
 </html>
