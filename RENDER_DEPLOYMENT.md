@@ -9,55 +9,95 @@ This guide will help you deploy the NormNinja Laravel application on Render.
 
 ## Deployment Architecture
 
-This application uses **Docker** for deployment on Render, which includes:
+This application is deployed using a **split architecture**:
+
+**Web Hosting: Render**
 - **Dockerfile**: Configures PHP 8.2 with Apache, installs dependencies, and builds assets
 - **docker-entrypoint.sh**: Handles application startup, migrations, and optimizations
-- **render.yaml**: Defines the complete infrastructure (web service + PostgreSQL database)
+- **render.yaml**: Defines the web service configuration
 
-The Docker container runs Apache with PHP and serves the Laravel application on port 80.
+**Database Hosting: Aiven** (Recommended)
+- **PostgreSQL**: Managed database service with better free tier
+- **Advantages**: No 90-day expiration, better reliability, automatic backups
+- **Setup Guide**: See `AIVEN_SETUP.md` for detailed instructions
+
+The Docker container runs Apache with PHP and serves the Laravel application on port 80, connecting to the external Aiven PostgreSQL database over SSL.
 
 ## Quick Deployment Steps
 
 ### Option 1: Deploy with render.yaml (Recommended)
 
-1. **Push your code to a Git repository** (if not already done)
+1. **Set up Aiven Database First**
+   - Follow the complete guide in `AIVEN_SETUP.md`
+   - Or use your existing Aiven database credentials
 
-2. **Sign in to Render**
+2. **Push your code to a Git repository** (if not already done)
+
+3. **Sign in to Render**
    - Go to [https://render.com](https://render.com)
    - Sign in or create a new account
 
-3. **Create a New Blueprint**
+4. **Create a New Web Service**
    - Click "New +" button in the dashboard
-   - Select "Blueprint"
-   - Connect your Git repository
-   - Render will automatically detect the `render.yaml` file
-   - Click "Apply" to create all services defined in the blueprint
+   - Select "Web Service"
+   - Connect your Git repository and select your branch
+   - Render will automatically detect the Dockerfile
 
-4. **Configure Environment Variables**
-   The render.yaml file configures most variables automatically, but you may need to set:
-   - `APP_URL`: Your Render service URL (e.g., https://normninja.onrender.com)
-   - `MAIL_HOST`, `MAIL_USERNAME`, `MAIL_PASSWORD`: If using email features
-
-5. **Wait for Deployment**
-   - Render will create the database and web service
-   - The build process will run automatically
-   - First deployment may take 5-10 minutes
-
-### Option 2: Manual Deployment
-
-#### Step 1: Create PostgreSQL Database
-
-1. In Render dashboard, click "New +" → "PostgreSQL"
-2. Configure:
-   - **Name**: normninja-db
-   - **Database**: normninja
-   - **User**: normninja
+5. **Configure Web Service**
+   - **Name**: normninja (or your preferred name)
    - **Region**: Choose closest to you
+   - **Branch**: main (or claude/prepare-deployment-7BrdK)
+   - **Runtime**: Docker (auto-detected)
+   - **Dockerfile Path**: ./Dockerfile
    - **Plan**: Free
-3. Click "Create Database"
-4. Save the connection details (Render will auto-populate them)
 
-#### Step 2: Create Web Service
+6. **Configure Aiven Database Environment Variables**
+   In the "Environment" section, add these variables from your Aiven dashboard:
+
+   ```
+   DB_CONNECTION=pgsql
+   DB_HOST=normninja-normninja.g.aivencloud.com
+   DB_PORT=16530
+   DB_DATABASE=defaultdb
+   DB_USERNAME=avnadmin
+   DB_PASSWORD=<your-aiven-password>
+   DB_SSLMODE=require
+   ```
+
+7. **Configure Other Environment Variables**
+   Add these essential variables:
+   ```
+   APP_NAME=NormNinja
+   APP_ENV=production
+   APP_DEBUG=false
+   APP_URL=https://normninja.onrender.com
+   LOG_CHANNEL=stack
+   LOG_LEVEL=info
+   SESSION_DRIVER=file
+   CACHE_DRIVER=file
+   QUEUE_CONNECTION=sync
+   ```
+
+   Note: `APP_KEY` will be auto-generated on first deployment
+
+8. **Deploy**
+   - Click "Create Web Service"
+   - Wait for deployment (5-10 minutes for first build)
+   - Monitor logs for successful database connection
+
+### Option 2: Using Aiven Database (Recommended Setup)
+
+#### Step 1: Set Up Aiven Database
+
+See `AIVEN_SETUP.md` for complete instructions. You'll get:
+- **Host**: normninja-normninja.g.aivencloud.com
+- **Port**: 16530
+- **Database**: defaultdb
+- **User**: avnadmin
+- **Password**: From Aiven dashboard
+- **SSL Mode**: REQUIRED
+
+#### Step 2: Create Web Service on Render
 
 1. In Render dashboard, click "New +" → "Web Service"
 2. Connect your Git repository
@@ -85,14 +125,15 @@ LOG_CHANNEL=stack
 LOG_LEVEL=info
 ```
 
-**Database Variables** (auto-filled from database):
+**Aiven Database Variables** (from your Aiven dashboard):
 ```
 DB_CONNECTION=pgsql
-DB_HOST=<from database>
-DB_PORT=<from database>
-DB_DATABASE=<from database>
-DB_USERNAME=<from database>
-DB_PASSWORD=<from database>
+DB_HOST=normninja-normninja.g.aivencloud.com
+DB_PORT=16530
+DB_DATABASE=defaultdb
+DB_USERNAME=avnadmin
+DB_PASSWORD=<your-aiven-password>
+DB_SSLMODE=require
 ```
 
 **Session & Cache:**
@@ -169,15 +210,16 @@ https://normninja.onrender.com
 
 ### Free Tier Limitations
 
-- **Web Service**:
+- **Render Web Service**:
   - Spins down after 15 minutes of inactivity
   - First request after spin-down may take 30-60 seconds
   - 750 hours/month of uptime
 
-- **Database**:
-  - 1GB storage
-  - Expires after 90 days (free tier)
-  - Data is backed up
+- **Aiven Database**:
+  - 1 GB RAM, 5 GB storage
+  - **No expiration** (permanent free tier)
+  - Automatic backups (2-day retention)
+  - SSL required for all connections
 
 ### Storage Considerations
 
@@ -188,13 +230,20 @@ https://normninja.onrender.com
   - Cloudinary for image storage
   - Or upgrade to Render paid plan with persistent disks
 
-### Database: PostgreSQL vs MySQL
+### Database: Aiven PostgreSQL
 
-This deployment uses PostgreSQL (Render's free database). If your app was originally built for MySQL, Laravel handles the differences automatically. However, if you encounter issues:
+This deployment uses **Aiven PostgreSQL** (managed database service). If your app was originally built for MySQL, Laravel handles the differences automatically. However, if you encounter issues:
 
 1. Check database migrations for MySQL-specific syntax
 2. Update any raw SQL queries to be PostgreSQL compatible
-3. Test all database operations after deployment
+3. Ensure `DB_SSLMODE=require` is always set (Aiven requires SSL)
+4. Test all database operations after deployment
+
+**Benefits of Aiven:**
+- No 90-day expiration (unlike Render's free tier database)
+- Better reliability and uptime
+- Automatic backups with 2-day retention
+- Professional monitoring and metrics
 
 ## Troubleshooting
 
@@ -209,11 +258,16 @@ This deployment uses PostgreSQL (Render's free database). If your app was origin
 
 ### Database Connection Errors
 
-**Issue**: Cannot connect to database
+**Issue**: Cannot connect to Aiven database
 **Solution**:
-- Verify database environment variables are set correctly
-- Check that the database is in the same region as web service
-- Ensure DB_CONNECTION is set to `pgsql`
+- Verify all Aiven database credentials are correct in Render environment variables
+- Ensure `DB_SSLMODE=require` is set (Aiven requires SSL)
+- Check that DB_HOST ends with `.aivencloud.com`
+- Verify Aiven service is running (check Aiven dashboard)
+- Test connection in Render Shell:
+  ```bash
+  php artisan db:show
+  ```
 
 ### 500 Internal Server Error
 
