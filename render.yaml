@@ -2,11 +2,10 @@ services:
   # Web Service
   - type: web
     name: normninja
-    runtime: php
+    runtime: docker
     plan: free
     region: oregon
-    buildCommand: bash build.sh
-    startCommand: bash start.sh
+    dockerfilePath: ./Dockerfile
     envVars:
       - key: APP_NAME
         value: NormNinja

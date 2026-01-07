@@ -7,6 +7,15 @@ This guide will help you deploy the NormNinja Laravel application on Render.
 - A [Render account](https://render.com) (free tier available)
 - Your code pushed to a Git repository (GitHub, GitLab, or Bitbucket)
 
+## Deployment Architecture
+
+This application uses **Docker** for deployment on Render, which includes:
+- **Dockerfile**: Configures PHP 8.2 with Apache, installs dependencies, and builds assets
+- **docker-entrypoint.sh**: Handles application startup, migrations, and optimizations
+- **render.yaml**: Defines the complete infrastructure (web service + PostgreSQL database)
+
+The Docker container runs Apache with PHP and serves the Laravel application on port 80.
+
 ## Quick Deployment Steps
 
 ### Option 1: Deploy with render.yaml (Recommended)
@@ -56,9 +65,8 @@ This guide will help you deploy the NormNinja Laravel application on Render.
    - **Name**: normninja
    - **Region**: Same as database
    - **Branch**: main (or your default branch)
-   - **Runtime**: PHP
-   - **Build Command**: `bash build.sh`
-   - **Start Command**: `bash start.sh`
+   - **Runtime**: Docker
+   - **Dockerfile Path**: ./Dockerfile
    - **Plan**: Free
 
 #### Step 3: Configure Environment Variables
@@ -192,11 +200,12 @@ This deployment uses PostgreSQL (Render's free database). If your app was origin
 
 ### Build Fails
 
-**Issue**: Build command fails
+**Issue**: Docker build fails
 **Solution**: Check the build logs in Render dashboard. Common issues:
-- Missing PHP extensions: Add them to render.yaml
+- Missing PHP extensions: Add them to the Dockerfile using `docker-php-ext-install`
 - Composer dependency conflicts: Update composer.json
-- Node version issues: Specify Node version in render.yaml
+- Node/npm version issues: Ensure Node is properly installed in Dockerfile
+- Docker layer caching: Try forcing a rebuild by pushing a new commit
 
 ### Database Connection Errors
 
