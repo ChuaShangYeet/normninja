@@ -1,47 +1,117 @@
-services:
-  - type: web
-    name: normninja
-    env: php
-    plan: free  # Change to 'starter' for $7/month (no spin-down)
-    buildCommand: bash build.sh
-    startCommand: |
-      php artisan storage:link
-      php artisan serve --host=0.0.0.0 --port=$PORT
-    healthCheckPath: /
-    envVars:
-      - key: APP_NAME
-        value: NormNinja
-      - key: APP_ENV
-        value: production
-      - key: APP_DEBUG
-        value: false
-      - key: APP_KEY
-        generateValue: true
-      - key: APP_URL
+# Exported from Render on 2026-01-12T09:25:05Z
+version: "1"
+projects:
+- name: My project
+  environments:
+  - name: Production
+    services:
+    - type: web
+      name: NormNinja
+      runtime: docker
+      repo: https://github.com/DataVoyagers/NormNinja
+      plan: free
+      envVars:
+      - key: VITE_APP_NAME
+        sync: false
+      - key: SESSION_PATH
+        sync: false
+      - key: SESSION_LIFETIME
+        sync: false
+      - key: SESSION_ENCRYPT
+        sync: false
+      - key: SESSION_DRIVER
+        sync: false
+      - key: SESSION_DOMAIN
+        sync: false
+      - key: REDIS_PORT
+        sync: false
+      - key: REDIS_PASSWORD
+        sync: false
+      - key: REDIS_HOST
+        sync: false
+      - key: REDIS_CLIENT
+        sync: false
+      - key: QUEUE_CONNECTION
+        sync: false
+      - key: MYSQL_ATTR_SSL_VERIFY_SERVER_CERT
+        sync: false
+      - key: MYSQL_ATTR_SSL_CA
+        sync: false
+      - key: MEMCACHED_HOST
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_SCHEME
+        sync: false
+      - key: MAIL_PORT
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_MAILER
+        sync: false
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_FROM_NAME
+        sync: false
+      - key: MAIL_FROM_ADDRESS
+        sync: false
+      - key: LOG_STACK
+        sync: false
+      - key: LOG_LEVEL
+        sync: false
+      - key: LOG_DEPRECATIONS_CHANNEL
         sync: false
       - key: LOG_CHANNEL
-        value: errorlog
-      - key: DB_CONNECTION
-        value: pgsql
-      - key: DATABASE_URL
-        fromDatabase:
-          name: normninja-db
-          property: connectionString
-      - key: SESSION_DRIVER
-        value: database
-      - key: SESSION_LIFETIME
-        value: 120
-      - key: QUEUE_CONNECTION
-        value: database
+        sync: false
       - key: FILESYSTEM_DISK
-        value: local
-      - key: MAIL_MAILER
-        value: log
-      - key: CACHE_DRIVER
-        value: file
-
-databases:
-  - name: normninja-db
-    databaseName: normninja
-    user: normninja
-    plan: free
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_CONNECTION
+        sync: false
+      - key: CACHE_STORE
+        sync: false
+      - key: BROADCAST_CONNECTION
+        sync: false
+      - key: BCRYPT_ROUNDS
+        sync: false
+      - key: AWS_USE_PATH_STYLE_ENDPOINT
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_DEFAULT_REGION
+        sync: false
+      - key: AWS_BUCKET
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: APP_NAME
+        sync: false
+      - key: APP_MAINTENANCE_DRIVER
+        sync: false
+      - key: APP_LOCALE
+        sync: false
+      - key: APP_KEY
+        sync: false
+      - key: APP_FALLBACK_LOCALE
+        sync: false
+      - key: APP_FAKER_LOCALE
+        sync: false
+      - key: APP_ENV
+        sync: false
+      - key: APP_DEBUG
+        sync: false
+      region: singapore
+      dockerContext: .
+      dockerfilePath: ./Dockerfile
+      autoDeployTrigger: commit
