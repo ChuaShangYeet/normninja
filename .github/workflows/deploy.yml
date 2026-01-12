@@ -8,6 +8,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+      contents: read
+    
     steps:
       - name: Create GitHub Deployment
         uses: chrnorm/deployment-action@v2
