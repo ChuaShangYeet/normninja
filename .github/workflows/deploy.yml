@@ -27,4 +27,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           deployment-id: ${{ steps.deployment.outputs.deployment_id }}
           state: success
-          environment-url: https://datavoyagers.github.io/NormNinja/
+          environment-url: https://normninja-lsxc.onrender.com
