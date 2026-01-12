@@ -49,4 +49,50 @@ class Quiz extends Model
     {
         return $this->questions()->sum('points');
     }
+
+    // Scope for active quizzes
+    public function scopeActive($query)
+    {
+        return $query->where('is_published', true)
+                    ->where(function($q) {
+                        $q->whereNull('available_from')
+                        ->orWhere('available_from', '<=', now());
+                    })
+                    ->where(function($q) {
+                        $q->whereNull('available_until')
+                        ->orWhere('available_until', '>=', now());
+                    });
+    }
+
+    public function isActive()
+    {
+        if (!$this->is_published) return false;
+        if ($this->available_from && $this->available_from > now()) return false;
+        if ($this->available_until && $this->available_until < now()) return false;
+        return true;
+    }
+
+    public function statusForStudent(User $student): string
+    {
+        $attempt = $this->attempts()
+            ->where('student_id', $student->id)
+            ->where('is_completed', true)
+            ->first();
+
+        if ($attempt) {
+            return 'completed';
+        }
+
+        if ($this->available_until && now()->gt($this->available_until)) {
+            return 'missed';
+        }
+
+        if (!$this->isActive()) {
+            return 'locked';
+        }
+
+        return 'available';
+    }
+
+
 }
