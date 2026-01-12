@@ -1,0 +1,30 @@
+name: Render Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create GitHub Deployment
+        uses: chrnorm/deployment-action@v2
+        id: deployment
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: render
+          environment-url: https://normninja-lsxc.onrender.com
+          description: Deployed to Render
+
+      - name: Wait for Render to Deploy
+        run: sleep 30
+
+      - name: Update Deployment Status to Success
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          state: success
+          environment-url: https://datavoyagers.github.io/NormNinja/
