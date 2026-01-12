@@ -59,10 +59,6 @@ class QuizController extends Controller
 
     public function show(Quiz $quiz)
     {
-        if (!$quiz->is_published && !auth()->user()->isTeacher()) {
-            abort(403);
-        }
-
         $userAttempts = null;
         if (auth()->user()->isStudent()) {
             $userAttempts = $quiz->attempts()->where('student_id', auth()->id())->get();
@@ -92,10 +88,6 @@ class QuizController extends Controller
             'available_until' => 'nullable|date|after:available_from',
         ]);
 
-        // Check if quiz is being published for the first time
-        $wasUnpublished = !$quiz->is_published;
-        $willBePublished = $request->boolean('is_published');
-
         $quiz->update([
             'title' => $request->title,
             'description' => $request->description,
@@ -121,8 +113,10 @@ class QuizController extends Controller
     // Quiz taking functionality
     public function start(Quiz $quiz)
     {
-        if (!$quiz->is_published) {
-            abort(403);
+         // Only active quizzes can be attempted
+        if (!$quiz->isActive() || ($quiz->available_until && now()->gt($quiz->available_until))) {
+            return redirect()->route('quizzes.index')
+                ->with('error', 'This quiz cannot be attempted.');
         }
 
         $attempt = QuizAttempt::create([
@@ -152,6 +146,11 @@ class QuizController extends Controller
             abort(403);
         }
 
+        // Lock submission if quiz expired
+        if ($quiz->available_until && now()->gt($quiz->available_until)) {
+            abort(403, 'This quiz has expired. Submission is no longer allowed.');
+        }
+
         $answers = $request->input('answers', []);
         $score = 0;
         $totalPoints = 0;
@@ -169,6 +168,11 @@ class QuizController extends Controller
                     $score += $question->points;
                 }
             }
+
+        // Lock submission if quiz expired
+        if ($quiz->available_until && now()->gt($quiz->available_until)) {
+            abort(403, 'This quiz has expired. Submission is no longer allowed.');
+        }
         }
 
         $attempt->update([

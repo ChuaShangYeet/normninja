@@ -69,7 +69,19 @@ class TeacherController extends Controller
             })->pluck('quiz_id')->unique();
 
             $completedQuizzes = $passedQuizIds->count();
-            $totalQuizzes = $teacher->quizzes()->count();
+            $now = now();
+            // Only quizzes that are still valid OR already completed by student
+            $totalQuizzes = $teacher->quizzes()
+                ->where(function ($q) use ($student, $now) {
+                    $q->whereNull('end_at')
+                    ->orWhere('end_at', '>=', $now)
+                    ->orWhereHas('attempts', function ($a) use ($student) {
+                        $a->where('student_id', $student->id)
+                            ->where('is_completed', true);
+                    });
+                })
+                ->count();
+
 
             // Average quiz score
             $avgQuizScore = 0;
@@ -104,6 +116,7 @@ class TeacherController extends Controller
             $courseProgress = ($totalQuizzes + $totalGames) > 0 
                 ? round(($completedQuizzes + $gamesPlayed) / ($totalQuizzes + $totalGames) * 100) 
                 : 0;
+
 
             // Determine if student needs support
             $needsSupport = false;

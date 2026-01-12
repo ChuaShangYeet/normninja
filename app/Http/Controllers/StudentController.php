@@ -158,7 +158,7 @@ class StudentController extends Controller
 
         // Available content
         $availableMaterials = LearningMaterial::where('is_published', true)->latest()->take(5)->get();
-        $availableQuizzes = Quiz::where('is_published', true)->latest()->take(5)->get();
+        $availableQuizzes = Quiz::active()->latest()->take(5)->get();
         $availableGames = Game::where('is_published', true)->latest()->take(5)->get();
         $calendarEvents = CalendarEvent::where('user_id', $student->id)->get();
 
@@ -227,7 +227,20 @@ class StudentController extends Controller
     private function calculateCourseProgress($student)
     {
         // Active content only
-        $totalQuizzes = Quiz::where('is_published', true)->count();
+        $now = now();
+
+        // Only quizzes that are still available OR already completed by student
+        $totalQuizzes = Quiz::where('is_published', true)
+            ->where(function ($q) use ($student, $now) {
+                $q->whereNull('available_until')
+                ->orWhere('available_until', '>=', $now)
+                ->orWhereHas('attempts', function ($a) use ($student) {
+                    $a->where('student_id', $student->id)
+                        ->where('is_completed', true);
+                });
+            })
+            ->count();
+
         $totalGames   = Game::where('is_published', true)->count();
 
         $passedQuizzes = $student->quizAttempts()
