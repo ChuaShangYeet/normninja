@@ -8,13 +8,6 @@
     <div class="flex justify-between items-center mb-8">
         <div>
             <h1 class="text-3xl font-bold text-gray-800">Quizzes</h1>
-            <!-- <p class="text-gray-600 mt-2">
-                @if(auth()->user()->isTeacher())
-                    Create and manage quizzes for your students
-                @else
-                    Take quizzes to test your knowledge
-                @endif
-            </p> -->
         </div>
         @if(auth()->user()->isTeacher())
         <a href="{{ route('quizzes.create') }}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold shadow-md transition duration-200">
@@ -91,21 +84,68 @@
                     <p><i class="fas fa-user mr-1"></i>{{ $quiz->teacher->name }}</p>
                 </div>
 
-                <!-- Student's Best Score -->
+                <!-- Student Logic -->
                 @if(auth()->user()->isStudent())
                     @php
+                        $now = now();
+
+                        $attempt = $quiz->attempts()
+                            ->where('student_id', auth()->id())
+                            ->latest()
+                            ->first();
+
+                        $hasCompleted = $quiz->attempts()
+                            ->where('student_id', auth()->id())
+                            ->where('is_completed', true)
+                            ->exists();
+
                         $bestAttempt = $quiz->attempts()
                             ->where('student_id', auth()->id())
                             ->where('is_completed', true)
                             ->orderBy('score', 'desc')
                             ->first();
+
+                        $isExpired = !$quiz->isActive();
+
+                        if ($hasCompleted) {
+                            $status = 'Completed';
+                            $badgeColor = 'bg-blue-100 text-blue-800';
+                        } elseif ($isExpired) {
+                            $status = 'Expired';
+                            $badgeColor = 'bg-red-100 text-red-800';
+                        } else {
+                            $status = 'Active';
+                            $badgeColor = 'bg-green-100 text-green-800';
+                        }
+
                     @endphp
+
+                    <!-- -- Best Score -- -->
                     @if($bestAttempt)
                     <div class="bg-blue-50 border-l-4 border-blue-500 p-2 mb-3">
                         <p class="text-xs text-blue-700">Your Best Score</p>
                         <p class="text-lg font-bold text-blue-800">{{ $bestAttempt->percentage }}%</p>
                     </div>
                     @endif
+
+                    <!-- -- Expired / Missed -- -->
+                    @if($isExpired && !$hasCompleted)
+                        <div class="bg-red-50 border-l-4 border-red-500 p-2 mb-3">
+                            <p class="text-sm font-semibold text-red-700">
+                                <i class="fas fa-clock mr-1"></i>Expired / Missed
+                            </p>
+                            <p class="text-xs text-red-600">
+                                You missed the deadline for this quiz.
+                            </p>
+                        </div>
+                    @endif
+                @endif
+
+                <!-- Status Badge -->
+                @if(auth()->user()->isStudent())
+                    <span class="px-2 py-1 rounded text-xs font-semibold {{ $badgeColor }}">
+                        {{ $status }}
+                    </span>
                 @endif
 
                 <!-- Action Buttons -->
@@ -135,11 +175,16 @@
                            class="flex-1 text-center text-blue-600 hover:text-blue-800 px-3 py-2 rounded text-sm font-semibold border border-blue-600 hover:bg-blue-50 transition duration-200">
                             <i class="fas fa-info-circle mr-1"></i>Details
                         </a>
-                        @if($quiz->is_published)
-                        <a href="{{ route('quizzes.start', $quiz) }}" 
-                           class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-sm font-semibold transition duration-200">
-                            <i class="fas fa-play mr-1"></i>Take Quiz
-                        </a>
+                        @if($quiz->is_published && !$isExpired)
+                            <a href="{{ route('quizzes.start', $quiz) }}" 
+                            class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded text-sm font-semibold transition duration-200">
+                                <i class="fas fa-play mr-1"></i>Take Quiz
+                            </a>
+                        @elseif($isExpired && !$hasCompleted)
+                            <button disabled
+                                class="flex-1 text-center bg-gray-300 text-gray-600 px-3 py-2 rounded text-sm font-semibold cursor-not-allowed">
+                                <i class="fas fa-lock mr-1"></i>Expired
+                            </button>
                         @endif
                     @endif
                 </div>
