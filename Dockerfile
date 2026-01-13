@@ -10,28 +10,35 @@ RUN apt-get update && apt-get install -y \
 # 3. Enable mod_rewrite for Laravel
 RUN a2enmod rewrite
 
-# 4. Set working directory
+# 4. Configure PHP upload limits
+RUN echo "upload_max_filesize = 50M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size = 50M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "max_execution_time = 300" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "max_input_time = 300" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "memory_limit = 256M" >> /usr/local/etc/php/conf.d/uploads.ini
+
+# 5. Set working directory
 WORKDIR /var/www/html/
 
-# 5. Copy project files
+# 6. Copy project files
 COPY . .
 
-# 6. Install Composer
+# 7. Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
 
-# 7. Build frontend if exists
+# 8. Build frontend if exists
 RUN npm install && npm run build || echo "No frontend build"
 
-# 8. Set permissions
+# 9. Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# 9. Fix Apache root to Laravel public
+# 10. Fix Apache root to Laravel public
 RUN sed -i 's|/var/www/html|/var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
 
-# 10. Expose port 80 (Render uses $PORT automatically)
+# 11. Expose port 80 (Render uses $PORT automatically)
 EXPOSE 80
 
-# 11. Start Apache
+# 12. Start Apache
 CMD ["apache2-foreground"]
