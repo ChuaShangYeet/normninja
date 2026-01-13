@@ -73,8 +73,8 @@ class TeacherController extends Controller
             // Only quizzes that are still valid OR already completed by student
             $totalQuizzes = $teacher->quizzes()
                 ->where(function ($q) use ($student, $now) {
-                    $q->whereNull('end_at')
-                    ->orWhere('end_at', '>=', $now)
+                    $q->whereNull('available_until')
+                    ->orWhere('available_until', '>=', $now)
                     ->orWhereHas('attempts', function ($a) use ($student) {
                         $a->where('student_id', $student->id)
                             ->where('is_completed', true);
