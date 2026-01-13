@@ -68,7 +68,7 @@ class TeacherController extends Controller
                 (($attempt->score / $attempt->total_points) * 100) >= $attempt->quiz->passing_score;
             })->pluck('quiz_id')->unique();
 
-            $completedQuizzes = $passedQuizIds->count();
+            $completedQuizzes = $bestQuizAttempts->count();
             $now = now();
             // Only quizzes that are still valid OR already completed by student
             $totalQuizzes = $teacher->quizzes()
